@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3B168F2D187C2E99001F239A /* HFBOscillator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B168F2C187C2E99001F239A /* HFBOscillator.m */; };
+		3B168F30187C3086001F239A /* HFBFrequencyModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B168F2F187C3086001F239A /* HFBFrequencyModel.m */; };
+		3BA9F158187B1AD300F9FD44 /* HFBFrequencyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA9F157187B1AD300F9FD44 /* HFBFrequencyCell.m */; };
+		3BA9F15A187B1AF200F9FD44 /* HFBFrequencyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BA9F159187B1AF200F9FD44 /* HFBFrequencyCell.xib */; };
+		BA7025BF1879AEAA00EC48CB /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA7025BE1879AEAA00EC48CB /* AudioToolbox.framework */; };
 		BA7588631877645300A0CB55 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA7588621877645300A0CB55 /* Foundation.framework */; };
 		BA7588651877645300A0CB55 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA7588641877645300A0CB55 /* CoreGraphics.framework */; };
 		BA7588671877645300A0CB55 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA7588661877645300A0CB55 /* UIKit.framework */; };
@@ -19,6 +24,8 @@
 		BA75887E1877645300A0CB55 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA7588661877645300A0CB55 /* UIKit.framework */; };
 		BA7588861877645300A0CB55 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BA7588841877645300A0CB55 /* InfoPlist.strings */; };
 		BA7588881877645300A0CB55 /* FrequencyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7588871877645300A0CB55 /* FrequencyTests.m */; };
+		BA7588961877661300A0CB55 /* HFBFrequencyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7588941877661300A0CB55 /* HFBFrequencyViewController.m */; };
+		BA7588971877661300A0CB55 /* HFBFrequencyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BA7588951877661300A0CB55 /* HFBFrequencyViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +39,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3B168F2B187C2E99001F239A /* HFBOscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBOscillator.h; sourceTree = "<group>"; };
+		3B168F2C187C2E99001F239A /* HFBOscillator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBOscillator.m; sourceTree = "<group>"; };
+		3B168F2E187C3086001F239A /* HFBFrequencyModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBFrequencyModel.h; sourceTree = "<group>"; };
+		3B168F2F187C3086001F239A /* HFBFrequencyModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBFrequencyModel.m; sourceTree = "<group>"; };
+		3BA9F156187B1AD300F9FD44 /* HFBFrequencyCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBFrequencyCell.h; sourceTree = "<group>"; };
+		3BA9F157187B1AD300F9FD44 /* HFBFrequencyCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBFrequencyCell.m; sourceTree = "<group>"; };
+		3BA9F159187B1AF200F9FD44 /* HFBFrequencyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HFBFrequencyCell.xib; sourceTree = "<group>"; };
+		BA7025BE1879AEAA00EC48CB /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		BA75885F1877645300A0CB55 /* Frequency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Frequency.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7588621877645300A0CB55 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BA7588641877645300A0CB55 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -48,6 +63,9 @@
 		BA7588831877645300A0CB55 /* FrequencyTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FrequencyTests-Info.plist"; sourceTree = "<group>"; };
 		BA7588851877645300A0CB55 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BA7588871877645300A0CB55 /* FrequencyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrequencyTests.m; sourceTree = "<group>"; };
+		BA7588931877661300A0CB55 /* HFBFrequencyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBFrequencyViewController.h; sourceTree = "<group>"; };
+		BA7588941877661300A0CB55 /* HFBFrequencyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBFrequencyViewController.m; sourceTree = "<group>"; };
+		BA7588951877661300A0CB55 /* HFBFrequencyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HFBFrequencyViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA7025BF1879AEAA00EC48CB /* AudioToolbox.framework in Frameworks */,
 				BA7588651877645300A0CB55 /* CoreGraphics.framework in Frameworks */,
 				BA7588671877645300A0CB55 /* UIKit.framework in Frameworks */,
 				BA7588631877645300A0CB55 /* Foundation.framework in Frameworks */,
@@ -96,6 +115,7 @@
 		BA7588611877645300A0CB55 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BA7025BE1879AEAA00EC48CB /* AudioToolbox.framework */,
 				BA7588621877645300A0CB55 /* Foundation.framework */,
 				BA7588641877645300A0CB55 /* CoreGraphics.framework */,
 				BA7588661877645300A0CB55 /* UIKit.framework */,
@@ -109,6 +129,16 @@
 			children = (
 				BA7588711877645300A0CB55 /* HFBAppDelegate.h */,
 				BA7588721877645300A0CB55 /* HFBAppDelegate.m */,
+				3BA9F156187B1AD300F9FD44 /* HFBFrequencyCell.h */,
+				3BA9F157187B1AD300F9FD44 /* HFBFrequencyCell.m */,
+				3BA9F159187B1AF200F9FD44 /* HFBFrequencyCell.xib */,
+				3B168F2E187C3086001F239A /* HFBFrequencyModel.h */,
+				3B168F2F187C3086001F239A /* HFBFrequencyModel.m */,
+				BA7588931877661300A0CB55 /* HFBFrequencyViewController.h */,
+				BA7588941877661300A0CB55 /* HFBFrequencyViewController.m */,
+				BA7588951877661300A0CB55 /* HFBFrequencyViewController.xib */,
+				3B168F2B187C2E99001F239A /* HFBOscillator.h */,
+				3B168F2C187C2E99001F239A /* HFBOscillator.m */,
 				BA7588741877645300A0CB55 /* Images.xcassets */,
 				BA7588691877645300A0CB55 /* Supporting Files */,
 			);
@@ -220,8 +250,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA7588971877661300A0CB55 /* HFBFrequencyViewController.xib in Resources */,
 				BA75886D1877645300A0CB55 /* InfoPlist.strings in Resources */,
 				BA7588751877645300A0CB55 /* Images.xcassets in Resources */,
+				3BA9F15A187B1AF200F9FD44 /* HFBFrequencyCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,7 +273,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				BA75886F1877645300A0CB55 /* main.m in Sources */,
+				BA7588961877661300A0CB55 /* HFBFrequencyViewController.m in Sources */,
 				BA7588731877645300A0CB55 /* HFBAppDelegate.m in Sources */,
+				3B168F30187C3086001F239A /* HFBFrequencyModel.m in Sources */,
+				3BA9F158187B1AD300F9FD44 /* HFBFrequencyCell.m in Sources */,
+				3B168F2D187C2E99001F239A /* HFBOscillator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,6 +478,7 @@
 				BA75888D1877645300A0CB55 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		BA75888E1877645300A0CB55 /* Build configuration list for PBXNativeTarget "FrequencyTests" */ = {
 			isa = XCConfigurationList;
@@ -450,6 +487,7 @@
 				BA7588901877645300A0CB55 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

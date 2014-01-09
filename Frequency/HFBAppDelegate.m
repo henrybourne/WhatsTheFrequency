@@ -7,6 +7,7 @@
 //
 
 #import "HFBAppDelegate.h"
+#import "HFBFrequencyViewController.h"
 
 @implementation HFBAppDelegate
 
@@ -16,6 +17,10 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+    
+    HFBFrequencyViewController *mainViewController = [[HFBFrequencyViewController alloc] init];
+    [self.window setRootViewController:mainViewController];
+    
     return YES;
 }
 
