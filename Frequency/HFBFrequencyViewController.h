@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "HFBOscillator.h"
 #import "HFBFrequencyModel.h"
+#import "HFBCorrectViewController.h"
 
-@interface HFBFrequencyViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+@interface HFBFrequencyViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, HFBCorrectViewControllerDelegate>
 {
     int currentFrequencyIndex;
 }
@@ -21,9 +22,12 @@
 @property NSNumber *currentFrequency;
 @property NSNumber *previousFrequency;
 @property NSTimer *playFrequencyToGuessTimer;
+@property HFBCorrectViewController *correctViewController;
 
 @property (nonatomic, strong) IBOutlet UITableView *frequencyTableView;
 
 - (IBAction)playFrequencyAgain:(id)sender;
+- (void)setUpViewForNextQuestion;
+- (void)clearView;
 
 @end

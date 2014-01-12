@@ -42,9 +42,22 @@
 
 - (void)viewDidLoad
 {
+    NSLog(@"[HFBFrequencyViewController viewDidLoad]");
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    UIBezierPath *linePath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0,self.view.frame.size.width, 1)];
+    //shape layer for the line
+    CAShapeLayer *line = [CAShapeLayer layer];
+    line.path = [linePath CGPath];
+    line.fillColor = [[UIColor blackColor] CGColor];
+    line.frame = CGRectMake(0, 155, self.view.frame.size.width,1);
+    [self.view.layer addSublayer:line];
+    
     [self.frequencyTableView registerNib:[UINib nibWithNibName:@"HFBFrequencyCell" bundle:nil] forCellReuseIdentifier:@"HFBFrequencyCell"];
+    self.frequencyTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.frequencyTableView.alwaysBounceVertical = NO;
+    
     [self nextFrequency];
 }
 
@@ -56,23 +69,6 @@
 
 #pragma mark Quiz Logic
 
-//- (void)nextFrequency
-//{
-//    int randomIndex = arc4random() % [self.frequencies count];
-//    self.currentFrequency = [self.frequencies objectAtIndex:randomIndex];
-//    
-//    // Make sure the frequency is different to last time
-//    while ([self.currentFrequency isEqual:self.previousFrequency])
-//    {
-//        randomIndex = arc4random() % [self.frequencies count];
-//        self.currentFrequency = [self.frequencies objectAtIndex:randomIndex];
-//    }
-//    
-//    currentFrequencyIndex = randomIndex;
-//    self.previousFrequency = self.currentFrequency;
-//}
-
-
 - (void)nextFrequency
 {
     // Stop current playback if any
@@ -83,25 +79,67 @@
     [self.oscillator startFrequency:[self.frequencyModel currentFrequencyInHz]];
 }
 
+- (void)setUpViewForNextQuestion
+{
+    NSLog(@"[HFBFrequencyViewController setUpViewForNextQuestion]");
+    [self.frequencyTableView reloadData];
+
+}
+
+- (void)clearView
+{
+//    self.frequencyTableView
+}
+
+#pragma mark HFBCorrectViewControllerDelegate
+- (void)didDismissCorrectViewController
+{
+    [self dismissViewControllerAnimated:YES completion:^(void){
+        NSLog(@"Completed dismissing view controller");
+        [self nextFrequency];
+    }];
+}
 
 #pragma mark UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // If guess was wrong, then mark the selection as incorrect
+    
     if (indexPath.row != [self.frequencyModel currentFrequencyIndex])
     {
-        NSLog(@"Incorrect Guess: %@", [self.frequencyModel frequencyLabelAtIndex:indexPath.row]);
-        // UITableViewCell *cell = [self.frequencyTableView cellForRowAtIndexPath:indexPath];
+        // If guess was wrong, then mark the selection as incorrect
+        NSLog(@"Incorrect Guess: %@", [self.frequencyModel frequencyLabelAtIndex:(int)indexPath.row]);
+        UITableViewCell *cell = [self.frequencyTableView cellForRowAtIndexPath:indexPath];
+        [cell setBackgroundColor:[UIColor colorWithRed:240/255.0f green:110/255.0f blue:103/255.0f alpha:1.0f]];
         // [cell setAccessoryType:(UITableViewCellAccessoryType)]
         
     }
-    // If selection was correct, mark as correct
     else
     {
-        NSLog(@"Correct Guess: %@", [self.frequencyModel frequencyLabelAtIndex:indexPath.row]);
-        [self nextFrequency];
+        // If guess was correct, show correct view
+        NSLog(@"Correct Guess: %@", [self.frequencyModel frequencyLabelAtIndex:(int)indexPath.row]);
+        
+        [self performSelector:@selector(showCorrectViewController:) withObject:nil afterDelay:0];
+        
+//        self.correctViewController = [[HFBCorrectViewController alloc] init];
+//        self.correctViewController.delegate = self;
+//        self.correctViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+//        [self presentViewController:self.correctViewController animated:YES completion:^(void){
+//            NSLog(@"Completed Presenting correctViewController");
+//            [self setUpViewForNextQuestion];
+//        }];
     }
+}
+
+-(void)showCorrectViewController:(id)sender
+{
+    self.correctViewController = [[HFBCorrectViewController alloc] init];
+    self.correctViewController.delegate = self;
+    self.correctViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    [self presentViewController:self.correctViewController animated:YES completion:^(void){
+        NSLog(@"Completed Presenting correctViewController");
+        [self setUpViewForNextQuestion];
+    }];
 }
 
 
@@ -122,8 +160,9 @@
         NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"HFBFrequencyCell" owner:self options:nil];
         cell = [nib objectAtIndex:0];
     }
-    
+    [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     cell.frequencyLabel.text = [self.frequencyModel frequencyLabelAtIndex:indexPath.row];
+    cell.backgroundColor = [UIColor whiteColor];
     return cell;
 }
 

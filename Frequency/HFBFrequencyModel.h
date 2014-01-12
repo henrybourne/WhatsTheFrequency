@@ -12,6 +12,7 @@
 
 @property NSArray *frequencies;
 @property NSArray *labels;
+@property NSArray *wasGuessedWrong;
 @property int currentFrequencyIndex;
 @property int previousFrequencyIndex;
 

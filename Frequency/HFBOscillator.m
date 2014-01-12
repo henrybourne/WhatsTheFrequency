@@ -135,11 +135,16 @@ OSStatus createTone(void                        *inRefCon,
     
 }
 
+- (void)stopFrequencyWithTimer:(NSTimer *)timer
+{
+    [self stopFrequency];
+}
+
 - (void)stopFrequency
 {
     if ((audioComponent) && (self.isPlaying == YES))
 	{
-        NSLog(@"Stop");
+        //NSLog(@"Stop");
 		AudioOutputUnitStop(audioComponent);
         self.isPlaying = NO;
     }
@@ -160,7 +165,7 @@ OSStatus createTone(void                        *inRefCon,
     {
         [self.playbackTimer invalidate];
     }
-    self.playbackTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(stopFrequency) userInfo:nil repeats:NO];
+    self.playbackTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(stopFrequencyWithTimer:) userInfo:nil repeats:NO];
 
     self.isPlaying = YES;
 }
