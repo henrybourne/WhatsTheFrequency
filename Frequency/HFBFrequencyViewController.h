@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "HFBOscillator.h"
-#import "HFBFrequencyModel.h"
+#import "HFBChallengeModel.h"
 #import "HFBCorrectViewController.h"
 
 @interface HFBFrequencyViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, HFBCorrectViewControllerDelegate>
@@ -17,7 +17,7 @@
 }
 
 @property HFBOscillator *oscillator;
-@property HFBFrequencyModel *frequencyModel;
+@property HFBChallengeModel *frequencyModel;
 @property NSMutableArray *frequencies;
 @property NSNumber *currentFrequency;
 @property NSNumber *previousFrequency;

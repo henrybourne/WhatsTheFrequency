@@ -8,6 +8,7 @@
 
 #import "HFBAppDelegate.h"
 #import "HFBFrequencyViewController.h"
+#import "HFBChallengesViewController.h"
 
 @implementation HFBAppDelegate
 
@@ -18,8 +19,13 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
-    HFBFrequencyViewController *mainViewController = [[HFBFrequencyViewController alloc] init];
-    [self.window setRootViewController:mainViewController];
+//    HFBFrequencyViewController *mainViewController = [[HFBFrequencyViewController alloc] init];
+//    [self.window setRootViewController:mainViewController];
+    
+    HFBChallengesViewController *challengesViewController = [[HFBChallengesViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:challengesViewController];
+    
+    [self.window setRootViewController:navigationController];
     
     return YES;
 }

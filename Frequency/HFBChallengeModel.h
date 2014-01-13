@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface HFBFrequencyModel : NSObject
+@interface HFBChallengeModel : NSObject
 
 @property NSArray *frequencies;
 @property NSArray *labels;

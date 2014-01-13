@@ -31,7 +31,7 @@
     if (self)
     {
         self.oscillator         = [[HFBOscillator alloc] init];
-        self.frequencyModel     = [[HFBFrequencyModel alloc] init];
+        self.frequencyModel     = [[HFBChallengeModel alloc] init];
         self.previousFrequency  = @0;
         self.currentFrequency   = @0;
         
@@ -118,16 +118,10 @@
     {
         // If guess was correct, show correct view
         NSLog(@"Correct Guess: %@", [self.frequencyModel frequencyLabelAtIndex:(int)indexPath.row]);
-        
+        UITableViewCell *cell = [self.frequencyTableView cellForRowAtIndexPath:indexPath];
+        [cell setBackgroundColor:[UIColor colorWithRed:145/255.0f green:215/255.0f blue:129/255.0f alpha:1.0f]];
         [self performSelector:@selector(showCorrectViewController:) withObject:nil afterDelay:0];
-        
-//        self.correctViewController = [[HFBCorrectViewController alloc] init];
-//        self.correctViewController.delegate = self;
-//        self.correctViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-//        [self presentViewController:self.correctViewController animated:YES completion:^(void){
-//            NSLog(@"Completed Presenting correctViewController");
-//            [self setUpViewForNextQuestion];
-//        }];
+
     }
 }
 
@@ -135,7 +129,6 @@
 {
     self.correctViewController = [[HFBCorrectViewController alloc] init];
     self.correctViewController.delegate = self;
-    self.correctViewController.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     [self presentViewController:self.correctViewController animated:YES completion:^(void){
         NSLog(@"Completed Presenting correctViewController");
         [self setUpViewForNextQuestion];
