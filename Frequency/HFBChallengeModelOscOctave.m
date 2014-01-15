@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Henry Bourne. All rights reserved.
 //
 
-#import "HFBOscillatorOctaveChallengeModel.h"
+#import "HFBChallengeModelOscOctave.h"
 
-@implementation HFBOscillatorOctaveChallengeModel
+@implementation HFBChallengeModelOscOctave
 
 - (id)init
 {

@@ -1,5 +1,5 @@
 //
-//  HFBOscillatorOctaveChallengeModel.h
+//  HFBChallengeModelOsc3rdOctave.h
 //  Frequency
 //
 //  Created by Henry Bourne on 13/01/2014.
@@ -8,6 +8,6 @@
 
 #import "HFBChallengeModel.h"
 
-@interface HFBOscillatorOctaveChallengeModel : HFBChallengeModel
+@interface HFBChallengeModelOsc3rdOctave : HFBChallengeModel
 
 @end

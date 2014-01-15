@@ -8,6 +8,9 @@
 
 #import "HFBChallengesViewController.h"
 #import "HFBChallengesCell.h"
+#import "HFBFrequencyViewController.h"
+#import "HFBChallengeModelOscOctave.h"
+#import "HFBChallengeModelOsc3rdOctave.h"
 
 @interface HFBChallengesViewController ()
 
@@ -95,6 +98,25 @@
         default:
             return nil;
             break;
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section == 0)
+    {
+        
+        HFBFrequencyViewController *frequencyViewController = [[HFBFrequencyViewController alloc] init];
+        if (indexPath.row == 0)
+        {
+            frequencyViewController.frequencyModel = [[HFBChallengeModelOscOctave alloc] init];
+            [self.navigationController pushViewController:frequencyViewController animated:YES];
+        }
+        else if (indexPath.row == 1)
+        {
+            frequencyViewController.frequencyModel = [[HFBChallengeModelOsc3rdOctave alloc] init];
+            [self.navigationController pushViewController:frequencyViewController animated:YES];
+        }
     }
 }
 

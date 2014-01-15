@@ -8,6 +8,8 @@
 
 #import "HFBOscillator.h"
 
+
+
 OSStatus createTone(void                        *inRefCon,
                     AudioUnitRenderActionFlags 	*ioActionFlags,
                     const AudioTimeStamp 		*inTimeStamp,
@@ -16,11 +18,10 @@ OSStatus createTone(void                        *inRefCon,
                     AudioBufferList             *ioData)
 
 {
-	// Fixed amplitude is good enough for our purposes
-	const double amplitude = 0.25;
     
-	// Get the tone parameters out of the view controller
+    // Get the tone parameters out of the view controller
 	HFBOscillator *oscillator = (__bridge HFBOscillator *)(inRefCon);
+    
 	double theta = [oscillator.theta doubleValue];
 	double theta_increment = 2.0 * M_PI * [oscillator.frequency doubleValue] / [oscillator.sampleRate doubleValue];
     
@@ -33,6 +34,53 @@ OSStatus createTone(void                        *inRefCon,
 	// Generate the samples
 	for (int frame = 0; frame < inNumberFrames; frame++)
 	{
+        // Set amplitude for fade in or out
+        double amplitude = 0.0f;
+        
+        switch (oscillator.oscState)
+        {
+            case kOscStateIdle:
+                amplitude = 0.0f;
+                break;
+                
+            case kOscStateFadeIn:
+                if (oscillator.fadeInPosition < oscillator.fadeInDuration)
+                {
+                    amplitude = [oscillator.fadeInCoefficients[oscillator.fadeInPosition] doubleValue];
+                    oscillator.fadeInPosition++;
+                }
+                else
+                {
+                    oscillator.fadeInPosition = 0;
+                    oscillator.oscState = kOscStateSustaining;
+                }
+                break;
+                
+            case kOscStateFadeOut:
+                if (oscillator.fadeOutPosition < oscillator.fadeOutDuration)
+                {
+                    amplitude = [oscillator.fadeOutCoefficients[oscillator.fadeOutPosition] doubleValue];
+                    oscillator.fadeOutPosition++;
+                }
+                else
+                {
+                    oscillator.fadeOutPosition = 0;
+                    oscillator.oscState = kOscStateIdle;
+                }
+                break;
+                
+            case kOscStateSustaining:
+                amplitude = oscillator.maxAmplitude;
+                break;
+                
+            default:
+                break;
+        }
+//        
+//        NSLog(@"Oscillator amplitude: %f", amplitude);
+//        NSLog(@"Oscillator fadeInPosition: %i", oscillator.fadeInPosition);
+//        NSLog(@"Oscillator fadeOutPosition: %i", oscillator.fadeOutPosition);
+        
 		buffer[frame] = sin(theta) * amplitude;
 		
 		theta += theta_increment;
@@ -48,6 +96,7 @@ OSStatus createTone(void                        *inRefCon,
 	return noErr;
 }
 
+
 @implementation HFBOscillator
 
 - (id)init
@@ -56,11 +105,24 @@ OSStatus createTone(void                        *inRefCon,
     {
         self.frequency   = @1000;
         self.sampleRate  = @44100;
+        self.fadeInDuration = 2000;
+        self.fadeOutDuration = 2000;
+        self.fadeInPosition = 0;
+        self.fadeOutPosition = 0;
+        self.maxAmplitude = 0.85f;
+        self.oscState = kOscStateIdle;
         
+        
+        [self calculateFadeInArray];
+        [self calculateFadeOutArray];
         
         [self setUpAudioUnit];
+        
         OSStatus status = AudioUnitInitialize(audioComponent);
         NSAssert(status == noErr, @"Error initializing unit: %li", status);
+        
+        status = AudioOutputUnitStart(audioComponent);
+        NSAssert(status == noErr, @"Error starting unit: %li", status);
     }
     return self;
 }
@@ -135,6 +197,29 @@ OSStatus createTone(void                        *inRefCon,
     
 }
 
+- (void)calculateFadeInArray
+{
+    self.fadeInCoefficients = [[NSMutableArray alloc] init];
+    for (int i = 0; i < self.fadeInDuration; i++)
+    {
+        double currentCoeff = (i * self.maxAmplitude) / self.fadeInDuration;
+        [self.fadeInCoefficients addObject:[NSNumber numberWithDouble:currentCoeff]];
+    }
+    NSLog(@"[HFBOscillator calculateFadeInArray] %@", self.fadeInCoefficients);
+}
+
+- (void)calculateFadeOutArray
+{
+    self.fadeOutCoefficients = [[NSMutableArray alloc] init];
+    for (int i = 0; i < self.fadeOutDuration; i++)
+    {
+        // y(x) = y1 + x * (y2 – y1) / length
+        double currentCoeff = self.maxAmplitude + i * (0 - self.maxAmplitude) / self.fadeOutDuration;
+        [self.fadeOutCoefficients addObject:[NSNumber numberWithDouble:currentCoeff]];
+    }
+    NSLog(@"[HFBOscillator calculateFadeOutArray] %@", self.fadeOutCoefficients);
+}
+
 - (void)stopFrequencyWithTimer:(NSTimer *)timer
 {
     [self stopFrequency];
@@ -142,23 +227,29 @@ OSStatus createTone(void                        *inRefCon,
 
 - (void)stopFrequency
 {
-    if ((audioComponent) && (self.isPlaying == YES))
-	{
-        //NSLog(@"Stop");
-		AudioOutputUnitStop(audioComponent);
-        self.isPlaying = NO;
-    }
+//    if ((audioComponent) && (self.isPlaying == YES))
+//	{
+//        NSLog(@"Oscillator Stop");
+//		//AudioOutputUnitStop(audioComponent);
+//        self.isPlaying = NO;
+//        self.oscState = kOscStateFadeOut;
+//    }
+    
+    NSLog(@"Oscillator Stop");
+    self.isPlaying = NO;
+    self.oscState = kOscStateIdle;
 }
 
 - (void)startFrequency:(int)freq
 {
+    NSLog(@"Oscillator Start");
     self.frequency = [NSNumber numberWithInt:freq];
     
     if (self.isPlaying == NO)
     {
         self.theta = @0;
-        OSStatus status = AudioOutputUnitStart(audioComponent);
-        NSAssert(status == noErr, @"Error starting unit: %li", status);
+        //OSStatus status = AudioOutputUnitStart(audioComponent);
+        //NSAssert(status == noErr, @"Error starting unit: %li", status);
     }
     
     if ([self.playbackTimer isValid])
@@ -168,6 +259,7 @@ OSStatus createTone(void                        *inRefCon,
     self.playbackTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(stopFrequencyWithTimer:) userInfo:nil repeats:NO];
 
     self.isPlaying = YES;
+    self.oscState = kOscStateFadeIn;
 }
 
 //

@@ -15,13 +15,6 @@
 
 @end
 
-// Octave frequencies
-// 63 125 250 500 1000 2000 4000 8000 16000
-
-// Third octave frequencies
-// 20 25 31.5 40 50 63 80 100 125 160 200 250 315 400 500 630 800 1000 1250 1600 2000 2500 3150 4000 5000 6000 8000 10000 12500 16000 20000
-
-
 
 @implementation HFBFrequencyViewController
 
@@ -31,7 +24,7 @@
     if (self)
     {
         self.oscillator         = [[HFBOscillator alloc] init];
-        self.frequencyModel     = [[HFBChallengeModel alloc] init];
+        //self.frequencyModel     = [[HFBChallengeModel alloc] init];
         self.previousFrequency  = @0;
         self.currentFrequency   = @0;
         
@@ -45,18 +38,29 @@
     NSLog(@"[HFBFrequencyViewController viewDidLoad]");
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+
+//    UIBezierPath *boxPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0,self.view.frame.size.width, 90)];
+//    //shape layer for the line
+//    CAShapeLayer *box = [CAShapeLayer layer];
+//    box.path = [boxPath CGPath];
+//    box.fillColor = [[UIColor colorWithRed:109/255.0f green:177/255.0f blue:192/255.0f alpha:1.0f] CGColor];
+//    box.frame = CGRectMake(0.0, 64.0, self.view.frame.size.width,60);
+//    [self.view.layer insertSublayer:box atIndex:0];
     
-    UIBezierPath *linePath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0,self.view.frame.size.width, 1)];
+    UIBezierPath *linePath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0,self.view.frame.size.width, 0.5)];
     //shape layer for the line
     CAShapeLayer *line = [CAShapeLayer layer];
     line.path = [linePath CGPath];
-    line.fillColor = [[UIColor blackColor] CGColor];
-    line.frame = CGRectMake(0, 155, self.view.frame.size.width,1);
+    line.fillColor = [[UIColor colorWithRed:200/255.0f green:199/255.0f blue:204/255.0f alpha:1.0f] CGColor];
+    line.frame = CGRectMake(0.0, 154.0, self.view.frame.size.width,0.5);
     [self.view.layer addSublayer:line];
+    
+
     
     [self.frequencyTableView registerNib:[UINib nibWithNibName:@"HFBFrequencyCell" bundle:nil] forCellReuseIdentifier:@"HFBFrequencyCell"];
     self.frequencyTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.frequencyTableView.alwaysBounceVertical = NO;
+    self.frequencyTableView.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0);
     
     [self nextFrequency];
 }
