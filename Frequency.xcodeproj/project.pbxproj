@@ -11,6 +11,8 @@
 		3B168F30187C3086001F239A /* HFBChallengeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B168F2F187C3086001F239A /* HFBChallengeModel.m */; };
 		3BA9F158187B1AD300F9FD44 /* HFBFrequencyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA9F157187B1AD300F9FD44 /* HFBFrequencyCell.m */; };
 		3BA9F15A187B1AF200F9FD44 /* HFBFrequencyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BA9F159187B1AF200F9FD44 /* HFBFrequencyCell.xib */; };
+		BA0BCAE2188A958E00471906 /* Biquad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA0BCADC188A958E00471906 /* Biquad.cpp */; };
+		BA0BCAE3188A958E00471906 /* TRandom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BA0BCAE0188A958E00471906 /* TRandom.cpp */; };
 		BA5247371884862E008DF106 /* HFBChallengesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5247361884862E008DF106 /* HFBChallengesViewController.m */; };
 		BA52473918848761008DF106 /* HFBChallengesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BA52473818848761008DF106 /* HFBChallengesCell.xib */; };
 		BA52473C188487BB008DF106 /* HFBChallengesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BA52473B188487BB008DF106 /* HFBChallengesCell.m */; };
@@ -53,6 +55,12 @@
 		3BA9F156187B1AD300F9FD44 /* HFBFrequencyCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBFrequencyCell.h; sourceTree = "<group>"; };
 		3BA9F157187B1AD300F9FD44 /* HFBFrequencyCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBFrequencyCell.m; sourceTree = "<group>"; };
 		3BA9F159187B1AF200F9FD44 /* HFBFrequencyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HFBFrequencyCell.xib; sourceTree = "<group>"; };
+		BA0BCADC188A958E00471906 /* Biquad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Biquad.cpp; sourceTree = "<group>"; };
+		BA0BCADD188A958E00471906 /* Biquad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Biquad.h; sourceTree = "<group>"; };
+		BA0BCADE188A958E00471906 /* ComplexNumber.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComplexNumber.h; sourceTree = "<group>"; };
+		BA0BCADF188A958E00471906 /* Pink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pink.h; sourceTree = "<group>"; };
+		BA0BCAE0188A958E00471906 /* TRandom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TRandom.cpp; sourceTree = "<group>"; };
+		BA0BCAE1188A958E00471906 /* TRandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TRandom.h; sourceTree = "<group>"; };
 		BA5247351884862E008DF106 /* HFBChallengesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBChallengesViewController.h; sourceTree = "<group>"; };
 		BA5247361884862E008DF106 /* HFBChallengesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBChallengesViewController.m; sourceTree = "<group>"; };
 		BA52473818848761008DF106 /* HFBChallengesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HFBChallengesCell.xib; sourceTree = "<group>"; };
@@ -112,9 +120,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BA0BCADB188A958E00471906 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				BA0BCADC188A958E00471906 /* Biquad.cpp */,
+				BA0BCADD188A958E00471906 /* Biquad.h */,
+				BA0BCADE188A958E00471906 /* ComplexNumber.h */,
+				BA0BCADF188A958E00471906 /* Pink.h */,
+				BA0BCAE0188A958E00471906 /* TRandom.cpp */,
+				BA0BCAE1188A958E00471906 /* TRandom.h */,
+			);
+			name = Utility;
+			path = Frequency/Utility;
+			sourceTree = "<group>";
+		};
 		BA7588561877645300A0CB55 = {
 			isa = PBXGroup;
 			children = (
+				BA0BCADB188A958E00471906 /* Utility */,
 				BA7588681877645300A0CB55 /* Frequency */,
 				BA7588811877645300A0CB55 /* FrequencyTests */,
 				BA7588611877645300A0CB55 /* Frameworks */,
@@ -311,8 +334,10 @@
 				BA75886F1877645300A0CB55 /* main.m in Sources */,
 				BA7588961877661300A0CB55 /* HFBFrequencyViewController.m in Sources */,
 				BA7588731877645300A0CB55 /* HFBAppDelegate.m in Sources */,
+				BA0BCAE3188A958E00471906 /* TRandom.cpp in Sources */,
 				3B168F30187C3086001F239A /* HFBChallengeModel.m in Sources */,
 				BA52474418849342008DF106 /* HFBChallengeModelOsc3rdOctave.m in Sources */,
+				BA0BCAE2188A958E00471906 /* Biquad.cpp in Sources */,
 				BA52473F18848D24008DF106 /* HFBChallengeModelOscOctave.m in Sources */,
 				BA52473C188487BB008DF106 /* HFBChallengesCell.m in Sources */,
 				BAA20D59187F535500014FEB /* HFBCorrectViewController.m in Sources */,

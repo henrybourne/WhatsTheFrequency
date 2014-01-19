@@ -14,8 +14,8 @@
 {
     if (self = [super init])
     {
-        
-
+        self.numberOfAnswers = 0;
+        self.numberOfCorrectAnswers = 0;
     }
     return self;
 }
@@ -29,8 +29,6 @@
         self.currentFrequencyIndex = arc4random() % [self.frequencies count];
     }
     self.previousFrequencyIndex = self.currentFrequencyIndex;
-    
-    //NSLog(@"Current Frequency: %d", self.currentFrequencyIndex);
 }
 
 - (NSString *)frequencyLabelAtIndex:(int)index
@@ -40,19 +38,36 @@
 
 - (int)numberOfFrequencies
 {
-    return [self.frequencies count];
+    return (int)[self.frequencies count];
 }
 
 - (int)currentFrequencyInHz
 {
-    int freq = [[self.frequencies objectAtIndex:self.currentFrequencyIndex] integerValue];
-    //NSLog(@"currentFrequencyInHz returns %d", freq);
+    int freq = (int)[[self.frequencies objectAtIndex:self.currentFrequencyIndex] integerValue];
     return freq;
 }
 
 - (NSString *)currentFrequencyLabel
 {
     return [self.labels objectAtIndex:self.currentFrequencyIndex];
+}
+
+- (void)didAnswer
+{
+    self.numberOfAnswers++;
+    NSLog(@"%@ numberOfAnswers: %i", self, self.numberOfAnswers);
+}
+
+- (void)didAnswerCorrectly
+{
+    self.numberOfCorrectAnswers++;
+    NSLog(@"%@ numberOfCorrectAnswers: %i", self, self.numberOfCorrectAnswers);
+}
+
+- (int)currentPercentCorrect
+{
+    int percent = ((double)self.numberOfCorrectAnswers/(double)self.numberOfAnswers)*100;
+    return percent;
 }
 
 @end

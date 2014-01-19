@@ -10,32 +10,41 @@
 #import <AudioUnit/AudioUnit.h>
 
 typedef enum {
-    kOscStateSustaining,
+    kOscStateIdle,
     kOscStateFadeIn,
-    kOscStateFadeOut,
-    kOscStateIdle
+    kOscStateSustaining,
+    kOscStateFadeOut
 } OscState;
+
+typedef enum {
+    kOscTypePureTone,
+    kOscTypePinkNoise
+} OscType;
+
 
 @interface HFBOscillator : NSObject
 {
 	AudioComponentInstance audioComponent;
 }
 
+@property OscType oscType;
 @property NSNumber *sampleRate;
 @property NSNumber *frequency;
 @property NSNumber *theta;
+@property NSNumber *amplitude;
 @property NSTimer *playbackTimer;
-@property BOOL isPlaying;
 @property OscState oscState;
-@property NSMutableArray *fadeInCoefficients;
-@property NSMutableArray *fadeOutCoefficients;
-@property int fadeInDuration;                   // in samples
-@property int fadeOutDuration;                  // in samples
-@property int fadeInPosition;
-@property int fadeOutPosition;
+@property NSMutableArray *fadeCoefficients;
+@property int fadeDuration;
+@property int fadePosition;
 @property double maxAmplitude;
+
+// Don't use init, use one of these instead
+- (id)initWithPureTone;
+- (id)initWithPinkNoise;
 
 - (void)stopFrequency;
 - (void)startFrequency:(int)freq;
+- (void)stopAudioUnit;
 
 @end

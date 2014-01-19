@@ -15,11 +15,16 @@
 @property NSArray *wasGuessedWrong;
 @property int currentFrequencyIndex;
 @property int previousFrequencyIndex;
+@property int numberOfAnswers;
+@property int numberOfCorrectAnswers;
 
 - (void)randomFrequency;
 - (NSString *)frequencyLabelAtIndex:(int)index;
 - (int)numberOfFrequencies;
 - (int)currentFrequencyInHz;
 - (NSString *)currentFrequencyLabel;
+- (void)didAnswer;
+- (void)didAnswerCorrectly;
+- (int)currentPercentCorrect;
 
 @end

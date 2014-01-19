@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HFBChallengeModel.h"
 
 @protocol HFBCorrectViewControllerDelegate <NSObject>
 - (void)didDismissCorrectViewController;
@@ -15,5 +16,7 @@
 @interface HFBCorrectViewController : UIViewController
 
 @property (nonatomic, weak) id<HFBCorrectViewControllerDelegate> delegate;
+@property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
+@property HFBChallengeModel *challengeModel;
 
 @end

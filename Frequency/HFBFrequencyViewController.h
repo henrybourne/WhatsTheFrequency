@@ -17,10 +17,8 @@
 }
 
 @property HFBOscillator *oscillator;
-@property HFBChallengeModel *frequencyModel;
+@property HFBChallengeModel *challengeModel;
 @property NSMutableArray *frequencies;
-@property NSNumber *currentFrequency;
-@property NSNumber *previousFrequency;
 @property NSTimer *playFrequencyToGuessTimer;
 @property HFBCorrectViewController *correctViewController;
 

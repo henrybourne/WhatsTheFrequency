@@ -29,6 +29,7 @@
                     <rect key="frame" x="0.0" y="154" width="320" height="414"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="sectionIndexTrackingBackgroundColor" red="0.69845448369565211" green="0.37207037019546629" blue="0.37811778289192322" alpha="1" colorSpace="calibratedRGB"/>
                     <connections>
                         <outlet property="dataSource" destination="-1" id="ARo-kd-0pO"/>
                         <outlet property="delegate" destination="-1" id="sbW-DD-p8v"/>

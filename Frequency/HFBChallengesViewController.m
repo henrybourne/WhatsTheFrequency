@@ -109,12 +109,14 @@
         HFBFrequencyViewController *frequencyViewController = [[HFBFrequencyViewController alloc] init];
         if (indexPath.row == 0)
         {
-            frequencyViewController.frequencyModel = [[HFBChallengeModelOscOctave alloc] init];
+            frequencyViewController.challengeModel = [[HFBChallengeModelOscOctave alloc] init];
+            frequencyViewController.navigationItem.title = @"Pure Tones";
             [self.navigationController pushViewController:frequencyViewController animated:YES];
         }
         else if (indexPath.row == 1)
         {
-            frequencyViewController.frequencyModel = [[HFBChallengeModelOsc3rdOctave alloc] init];
+            frequencyViewController.challengeModel = [[HFBChallengeModelOsc3rdOctave alloc] init];
+            frequencyViewController.navigationItem.title = @"Pure Tones";
             [self.navigationController pushViewController:frequencyViewController animated:YES];
         }
     }

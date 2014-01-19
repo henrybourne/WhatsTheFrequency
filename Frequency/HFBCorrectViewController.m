@@ -30,6 +30,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     NSLog(@"[HFBCorrectViewController viewDidLoad]");
+    self.scoreLabel.text = [NSString stringWithFormat:@"Score: %i%%", [self.challengeModel currentPercentCorrect]];
 }
 
 - (void)viewDidAppear:(BOOL)animated

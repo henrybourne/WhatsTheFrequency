@@ -6,6 +6,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HFBCorrectViewController">
             <connections>
+                <outlet property="scoreLabel" destination="nky-Hy-SyF" id="Sex-O9-5HJ"/>
                 <outlet property="view" destination="1" id="3"/>
             </connections>
         </placeholder>
@@ -15,13 +16,13 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Correct!" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OH3-Ci-JGP">
-                    <rect key="frame" x="20" y="68" width="280" height="132"/>
+                    <rect key="frame" x="20" y="73" width="280" height="132"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" name="HelveticaNeue-UltraLight" family="Helvetica Neue" pointSize="60"/>
                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f6g-g0-ITI">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f6g-g0-ITI">
                     <rect key="frame" x="108" y="333" width="105" height="30"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <state key="normal" title="Next frequency">
@@ -32,8 +33,23 @@
                         <action selector="close:" destination="-1" eventType="touchUpInside" id="LPi-Qr-Vv6"/>
                     </connections>
                 </button>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Score: 100%" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nky-Hy-SyF">
+                    <rect key="frame" x="99" y="171" width="122" height="26"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="22"/>
+                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="0.56804645060000003" green="0.84284770490000005" blue="0.50478243830000002" alpha="1" colorSpace="calibratedRGB"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="f6g-g0-ITI" secondAttribute="trailing" constant="107" id="AXb-J2-1Zc"/>
+                <constraint firstAttribute="trailing" secondItem="nky-Hy-SyF" secondAttribute="trailing" constant="99" id="LK3-hF-q23"/>
+                <constraint firstItem="f6g-g0-ITI" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="108" id="O1x-uL-L4X"/>
+                <constraint firstItem="nky-Hy-SyF" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="99" id="RV8-iw-nNT"/>
+                <constraint firstItem="f6g-g0-ITI" firstAttribute="top" secondItem="nky-Hy-SyF" secondAttribute="bottom" constant="136" id="Yum-kN-H7m"/>
+                <constraint firstItem="nky-Hy-SyF" firstAttribute="top" secondItem="1" secondAttribute="top" constant="171" id="gQd-ou-SdA"/>
+            </constraints>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
         </view>

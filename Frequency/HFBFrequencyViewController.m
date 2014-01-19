@@ -23,10 +23,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
     {
-        self.oscillator         = [[HFBOscillator alloc] init];
-        //self.frequencyModel     = [[HFBChallengeModel alloc] init];
-        self.previousFrequency  = @0;
-        self.currentFrequency   = @0;
+        self.oscillator = [[HFBOscillator alloc] initWithPureTone];
         
     }
     
@@ -61,8 +58,9 @@
     self.frequencyTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.frequencyTableView.alwaysBounceVertical = NO;
     self.frequencyTableView.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0);
-    
-    [self nextFrequency];
+
+    [self performSelector:@selector(nextFrequency) withObject:nil afterDelay:0];
+    //[self nextFrequency];
 }
 
 - (void)didReceiveMemoryWarning
@@ -78,9 +76,14 @@
     // Stop current playback if any
     [self.oscillator stopFrequency];
     // Tell the model to get a new random frequency
-    [self.frequencyModel randomFrequency];
+    [self.challengeModel randomFrequency];
     // Play the new frequency
-    [self.oscillator startFrequency:[self.frequencyModel currentFrequencyInHz]];
+    [self.oscillator startFrequency:[self.challengeModel currentFrequencyInHz]];
+}
+
+- (void)replayFrequency
+{
+    [self.oscillator startFrequency:[self.challengeModel currentFrequencyInHz]];
 }
 
 - (void)setUpViewForNextQuestion
@@ -108,24 +111,23 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [self.challengeModel didAnswer];
     
-    if (indexPath.row != [self.frequencyModel currentFrequencyIndex])
+    if (indexPath.row != [self.challengeModel currentFrequencyIndex])
     {
         // If guess was wrong, then mark the selection as incorrect
-        NSLog(@"Incorrect Guess: %@", [self.frequencyModel frequencyLabelAtIndex:(int)indexPath.row]);
+        NSLog(@"Incorrect Guess: %@", [self.challengeModel frequencyLabelAtIndex:(int)indexPath.row]);
         UITableViewCell *cell = [self.frequencyTableView cellForRowAtIndexPath:indexPath];
-        [cell setBackgroundColor:[UIColor colorWithRed:240/255.0f green:110/255.0f blue:103/255.0f alpha:1.0f]];
-        // [cell setAccessoryType:(UITableViewCellAccessoryType)]
-        
+        [cell setBackgroundColor:[UIColor colorWithRed:178/255.0f green:95/255.0f blue:96/255.0f alpha:1.0f]];
     }
     else
     {
         // If guess was correct, show correct view
-        NSLog(@"Correct Guess: %@", [self.frequencyModel frequencyLabelAtIndex:(int)indexPath.row]);
+        NSLog(@"Correct Guess: %@", [self.challengeModel frequencyLabelAtIndex:(int)indexPath.row]);
+        [self.challengeModel didAnswerCorrectly];
         UITableViewCell *cell = [self.frequencyTableView cellForRowAtIndexPath:indexPath];
         [cell setBackgroundColor:[UIColor colorWithRed:145/255.0f green:215/255.0f blue:129/255.0f alpha:1.0f]];
         [self performSelector:@selector(showCorrectViewController:) withObject:nil afterDelay:0];
-
     }
 }
 
@@ -133,18 +135,21 @@
 {
     self.correctViewController = [[HFBCorrectViewController alloc] init];
     self.correctViewController.delegate = self;
+    self.correctViewController.challengeModel = self.challengeModel;
     [self presentViewController:self.correctViewController animated:YES completion:^(void){
         NSLog(@"Completed Presenting correctViewController");
         [self setUpViewForNextQuestion];
     }];
 }
 
+// Before navigation controller destorys this viewcontroller, need to stop audio unit
+// Shoudln't call when the view is hidden, as the 'Correct' dialog will hide it
 
 #pragma mark UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return (NSInteger)[self.frequencyModel numberOfFrequencies];
+    return (NSInteger)[self.challengeModel numberOfFrequencies];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -158,7 +163,7 @@
         cell = [nib objectAtIndex:0];
     }
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    cell.frequencyLabel.text = [self.frequencyModel frequencyLabelAtIndex:indexPath.row];
+    cell.frequencyLabel.text = [self.challengeModel frequencyLabelAtIndex:indexPath.row];
     cell.backgroundColor = [UIColor whiteColor];
     return cell;
 }
@@ -168,7 +173,7 @@
 
 - (IBAction)playFrequencyAgain:(id)sender
 {
-    [self.oscillator startFrequency:[self.frequencyModel currentFrequencyInHz]];
+    [self performSelector:@selector(replayFrequency) withObject:nil afterDelay:0];
 }
 
 
