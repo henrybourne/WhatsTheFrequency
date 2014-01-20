@@ -23,10 +23,18 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self)
     {
-        self.oscillator = [[HFBOscillator alloc] initWithPureTone];
         
     }
     
+    return self;
+}
+
+- (id)initWithOscillatorType:(OscType)osc bandwidth:(Bandwidth)bandwidth
+{
+    self = [self init];
+    self.oscillator = [[HFBOscillator alloc] init];
+    self.oscillator.oscType = osc;
+    self.challengeModel = [[HFBChallengeModel alloc] initWithBandwidth:bandwidth];
     return self;
 }
 
@@ -36,11 +44,12 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
 
+    self.view.backgroundColor = [UIColor colorWithRed:239/255.0f green:239/255.0f blue:244/255.0f alpha:1.0f];
 //    UIBezierPath *boxPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0,self.view.frame.size.width, 90)];
 //    //shape layer for the line
 //    CAShapeLayer *box = [CAShapeLayer layer];
 //    box.path = [boxPath CGPath];
-//    box.fillColor = [[UIColor colorWithRed:109/255.0f green:177/255.0f blue:192/255.0f alpha:1.0f] CGColor];
+//    box.fillColor = [[UIColor colorWithRed:239/255.0f green:239/255.0f blue:244/255.0f alpha:1.0f] CGColor];
 //    box.frame = CGRectMake(0.0, 64.0, self.view.frame.size.width,60);
 //    [self.view.layer insertSublayer:box atIndex:0];
     
@@ -59,8 +68,17 @@
     self.frequencyTableView.alwaysBounceVertical = NO;
     self.frequencyTableView.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0);
 
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [self.oscillator setUpAudioUnit];
     [self performSelector:@selector(nextFrequency) withObject:nil afterDelay:0];
-    //[self nextFrequency];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [self.oscillator stopAudioUnit];
 }
 
 - (void)didReceiveMemoryWarning
@@ -78,6 +96,8 @@
     // Tell the model to get a new random frequency
     [self.challengeModel randomFrequency];
     // Play the new frequency
+    self.oscillator.noiseBandwidth = 1;
+    self.oscillator.noiseCenterFrequency = [self.challengeModel currentFrequencyInHz];
     [self.oscillator startFrequency:[self.challengeModel currentFrequencyInHz]];
 }
 

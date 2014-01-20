@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "HFBOscillator.h"
-#import "HFBChallengeModel.h"
 #import "HFBCorrectViewController.h"
 
 @interface HFBFrequencyViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, HFBCorrectViewControllerDelegate>
@@ -21,9 +20,11 @@
 @property NSMutableArray *frequencies;
 @property NSTimer *playFrequencyToGuessTimer;
 @property HFBCorrectViewController *correctViewController;
+@property OscType oscType;
 
 @property (nonatomic, strong) IBOutlet UITableView *frequencyTableView;
 
+- (id)initWithOscillatorType:(OscType)osc bandwidth:(Bandwidth)bandwidth;
 - (IBAction)playFrequencyAgain:(id)sender;
 - (void)setUpViewForNextQuestion;
 - (void)clearView;

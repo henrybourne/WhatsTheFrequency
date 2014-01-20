@@ -9,8 +9,6 @@
 #import "HFBChallengesViewController.h"
 #import "HFBChallengesCell.h"
 #import "HFBFrequencyViewController.h"
-#import "HFBChallengeModelOscOctave.h"
-#import "HFBChallengeModelOsc3rdOctave.h"
 
 @interface HFBChallengesViewController ()
 
@@ -38,6 +36,7 @@
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
     self.navigationItem.title = @"Challenges";
+    //self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Challenges" style:UIBarButtonItemStylePlain target:nil action:Nil];
     
     [self.tableView registerNib:[UINib nibWithNibName:@"HFBChallengesCell" bundle:nil] forCellReuseIdentifier:@"HFBChallengesCell"];
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -55,12 +54,26 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
+    switch (section) {
+        case 0:
+            // Pure Tone
+            return 2;
+            break;
+            
+        case 2:
+            // Noise
+            return 2;
+            break;
+            
+        default:
+            break;
+    }
     return 2;
 }
 
@@ -70,17 +83,34 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     // Configure the cell...
-    switch (indexPath.row) {
-        case 0:
-            cell.textLabel.text = @"Octave Spacing";
-            break;
-        case 1:
-            cell.textLabel.text = @"Third Octave Spacing";
-            break;
-            
-        default:
-            break;
+    if (indexPath.section == 0) {
+        switch (indexPath.row) {
+            case 0:
+                cell.textLabel.text = @"Octave Spacing";
+                break;
+            case 1:
+                cell.textLabel.text = @"Third Octave Spacing";
+                break;
+                
+            default:
+                break;
+        }
     }
+    else if (indexPath.section == 1)
+    {
+        switch (indexPath.row) {
+            case 0:
+                cell.textLabel.text = @"Octave Spacing";
+                break;
+            case 1:
+                cell.textLabel.text = @"Third Octave Spacing";
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
     
     return cell;
 }
@@ -103,23 +133,35 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    HFBFrequencyViewController *frequencyViewController;
+    
     if (indexPath.section == 0)
     {
-        
-        HFBFrequencyViewController *frequencyViewController = [[HFBFrequencyViewController alloc] init];
         if (indexPath.row == 0)
         {
-            frequencyViewController.challengeModel = [[HFBChallengeModelOscOctave alloc] init];
+            frequencyViewController = [[HFBFrequencyViewController alloc] initWithOscillatorType:kOscTypePureTone bandwidth:kBandwidthOctave];
             frequencyViewController.navigationItem.title = @"Pure Tones";
-            [self.navigationController pushViewController:frequencyViewController animated:YES];
         }
         else if (indexPath.row == 1)
         {
-            frequencyViewController.challengeModel = [[HFBChallengeModelOsc3rdOctave alloc] init];
+            frequencyViewController = [[HFBFrequencyViewController alloc] initWithOscillatorType:kOscTypePureTone bandwidth:kBandwidthThirdOctave];
             frequencyViewController.navigationItem.title = @"Pure Tones";
-            [self.navigationController pushViewController:frequencyViewController animated:YES];
         }
     }
+    else if (indexPath.section == 1)
+    {
+        if (indexPath.row == 0)
+        {
+            frequencyViewController = [[HFBFrequencyViewController alloc] initWithOscillatorType:kOscTypePinkNoise bandwidth:kBandwidthOctave];
+            frequencyViewController.navigationItem.title = @"Filtered Noise";
+        }
+        else if (indexPath.row == 1)
+        {
+            frequencyViewController = [[HFBFrequencyViewController alloc] initWithOscillatorType:kOscTypePinkNoise bandwidth:kBandwidthThirdOctave];
+            frequencyViewController.navigationItem.title = @"Filtered Noise";
+        }
+    }
+    [self.navigationController pushViewController:frequencyViewController animated:YES];
 }
 
 /*

@@ -8,16 +8,23 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    kBandwidthOctave,
+    kBandwidthThirdOctave
+} Bandwidth;
+
 @interface HFBChallengeModel : NSObject
 
+@property Bandwidth bandwidth;
 @property NSArray *frequencies;
-@property NSArray *labels;
-@property NSArray *wasGuessedWrong;
+@property NSArray *frequencyLabels;
+@property NSArray *frequencyState;
 @property int currentFrequencyIndex;
 @property int previousFrequencyIndex;
 @property int numberOfAnswers;
 @property int numberOfCorrectAnswers;
 
+- (id)initWithBandwidth:(Bandwidth)initBandwidth;
 - (void)randomFrequency;
 - (NSString *)frequencyLabelAtIndex:(int)index;
 - (int)numberOfFrequencies;

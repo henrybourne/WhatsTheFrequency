@@ -27,22 +27,41 @@ typedef enum {
 	AudioComponentInstance audioComponent;
 }
 
-@property OscType oscType;
-@property NSNumber *sampleRate;
-@property NSNumber *frequency;
-@property NSNumber *theta;
-@property NSNumber *amplitude;
-@property NSTimer *playbackTimer;
-@property OscState oscState;
+@property OscType   oscType;
+@property int       sampleRate;
+@property int       frequency;
+@property double    fadeAmplitude;
+@property double    maxAmplitude;
+@property NSTimer   *playbackTimer;
+@property OscState  oscState;
 @property NSMutableArray *fadeCoefficients;
-@property int fadeDuration;
-@property int fadePosition;
-@property double maxAmplitude;
+@property int       fadeDuration;
+@property int       fadePosition;
 
-// Don't use init, use one of these instead
-- (id)initWithPureTone;
-- (id)initWithPinkNoise;
+// Tone Properties
+@property double toneTheta;
+@property double toneThetaIncrement;
+// Filtered Noise Properties
+@property double noiseCenterFrequency;
+@property double noiseBandwidth;
+@property double noisew0;
+@property double noisec;
+@property double noises;
+@property double noisealpha;
+@property double noiseb0;
+@property double noiseb1;
+@property double noiseb2;
+@property double noisea0;
+@property double noisea1;
+@property double noisea2;
+@property double noiseFilterX;
+@property double noiseFilterXmem1;
+@property double noiseFilterXmem2;
+@property double noiseFilterY;
+@property double noiseFilterYmem1;
+@property double noiseFilterYmem2;
 
+- (void)setUpAudioUnit;
 - (void)stopFrequency;
 - (void)startFrequency:(int)freq;
 - (void)stopAudioUnit;

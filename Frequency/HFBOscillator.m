@@ -1,5 +1,5 @@
 //
-//  HFBOscillator.mm
+//  HFBOscillator.m
 //  Frequency
 //
 //  Created by Henry Bourne on 07/01/2014.
@@ -7,6 +7,15 @@
 //
 
 #import "HFBOscillator.h"
+
+static unsigned long sGetNextRandomNumber()
+{
+	static unsigned long randSeed = 22222;  /* Change this for different random sequences. */
+	randSeed = (randSeed * 196314165) + 907633515;
+	return randSeed;
+}
+
+
 
 #pragma mark AudioUnit Callback
 OSStatus oscillatorRenderer(void                        *inRefCon,
@@ -18,53 +27,49 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
 
 {
     
-    // Get the tone parameters out of the view controller
-	HFBOscillator *oscillator = (__bridge HFBOscillator *)(inRefCon);
-    
-    double amplitude = [oscillator.amplitude doubleValue];
-	double theta = [oscillator.theta doubleValue];
-	double theta_increment = 2.0 * M_PI * [oscillator.frequency doubleValue] / [oscillator.sampleRate doubleValue];
-    
+    // Get access to the view controller for all the generator variables
+	HFBOscillator *osc = (__bridge HFBOscillator *)(inRefCon);
+
 	// This is a mono tone generator so we only need the first buffer
-	const int channel = 0;
-	Float32 *buffer = (Float32 *)ioData->mBuffers[channel].mData;
+	Float32 *buffer = (Float32 *)ioData->mBuffers[0].mData;
 	
 	// Generate the samples
 	for (int frame = 0; frame < inNumberFrames; frame++)
 	{
-        switch (oscillator.oscState)
+        // First calculate the amplitude if fading in or out
+        switch (osc.oscState)
         {
             case kOscStateIdle:
-                amplitude = 0.f;
+                osc.fadeAmplitude = 0.f;
                 break;
                 
             case kOscStateFadeIn:
-                if (oscillator.fadePosition < oscillator.fadeDuration)
+                if (osc.fadePosition < osc.fadeDuration)
                 {
-                    amplitude = [oscillator.fadeCoefficients[oscillator.fadePosition] doubleValue];
-                    oscillator.fadePosition++;
+                    osc.fadeAmplitude = [osc.fadeCoefficients[osc.fadePosition] doubleValue];
+                    osc.fadePosition++;
                 }
                 else
                 {
-                    oscillator.fadePosition = oscillator.fadeDuration - 1;
-                    oscillator.oscState = kOscStateSustaining;
+                    osc.fadePosition = osc.fadeDuration - 1;
+                    osc.oscState = kOscStateSustaining;
                 }
                 break;
                 
             case kOscStateSustaining:
-                amplitude = oscillator.maxAmplitude;
+                osc.fadeAmplitude = osc.maxAmplitude;
                 break;
                 
             case kOscStateFadeOut:
-                if (oscillator.fadePosition >= 0)
+                if (osc.fadePosition >= 0)
                 {
-                    amplitude = [oscillator.fadeCoefficients[oscillator.fadePosition] doubleValue];
-                    oscillator.fadePosition--;
+                    osc.fadeAmplitude = [osc.fadeCoefficients[osc.fadePosition] doubleValue];
+                    osc.fadePosition--;
                 }
                 else
                 {
-                    oscillator.fadePosition = 0;
-                    oscillator.oscState = kOscStateIdle;
+                    osc.fadePosition = 0;
+                    osc.oscState = kOscStateIdle;
                 }
                 break;
                 
@@ -72,20 +77,34 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
                 break;
         }
         
-        // Generate the sample for this frame
-		buffer[frame] = sin(theta) * amplitude;
-        
-		theta += theta_increment;
-		if (theta > 2.0 * M_PI)
-		{
-			theta -= 2.0 * M_PI;
-		}
+        if (osc.oscType == kOscTypePureTone)
+        {
+            // Generate pure tone output
+            buffer[frame] = sin(osc.toneTheta) * osc.fadeAmplitude;
+            
+            osc.toneTheta += osc.toneThetaIncrement;
+            if (osc.toneTheta > 2.0 * M_PI)
+            {
+                osc.toneTheta -= 2.0 * M_PI;
+            }
+        }
+        else if (osc.oscType == kOscTypePinkNoise)
+        {
+            // Generate filtered noise output
+            osc.noiseFilterX = ((long)sGetNextRandomNumber()) * (float)(1.0f / LONG_MAX) * osc.fadeAmplitude;
+            // number y = b0*x + b1*xmem1 + b2*xmem2 - a1*ymem1 - a2*ymem2;
+            osc.noiseFilterY = (osc.noiseb0*osc.noiseFilterX) + (osc.noiseb1*osc.noiseFilterXmem1) + (osc.noiseb2*osc.noiseFilterXmem2) - (osc.noisea1*osc.noiseFilterYmem1) - (osc.noisea2*osc.noiseFilterYmem2);
+            
+            buffer[frame] = osc.noiseFilterY;
+            
+            // step values for next loop
+            osc.noiseFilterXmem2 = osc.noiseFilterXmem1;
+            osc.noiseFilterXmem1 = osc.noiseFilterX;
+            osc.noiseFilterYmem2 = osc.noiseFilterYmem1;
+            osc.noiseFilterYmem1 = osc.noiseFilterY;
+        }
 	}
 	
-	// Store the theta back in the view controller
-	oscillator.theta = [NSNumber numberWithDouble:theta];
-    oscillator.amplitude = [NSNumber numberWithDouble:amplitude];
-    
 	return noErr;
 }
 
@@ -98,33 +117,16 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
 {
     if (self = [super init])
     {
-        self.frequency   = @1000;
-        self.sampleRate  = @44100;
-        self.fadeDuration = 8000;
-        self.fadePosition = 0;
-        self.amplitude = 0;
-        self.maxAmplitude = 0.5f;
-        self.oscState = kOscStateIdle;
+        self.frequency      = 1000;
+        self.sampleRate     = 44100;
+        self.fadeDuration   = 8000;
+        self.fadePosition   = 0;
+        self.fadeAmplitude      = 0.0f;
+        self.maxAmplitude   = 0.5f;
+        self.oscState       = kOscStateIdle;
+        
         [self calculateFadeCoefficients];
     }
-    return self;
-}
-
-- (id)initWithPureTone
-{
-    self = [self init];
-    
-    self.oscType = kOscTypePureTone;
-    [self setUpAudioUnit];
-    return self;
-}
-
-- (id)initWithPinkNoise
-{
-    self = [self init];
-    
-    self.oscType = kOscTypePinkNoise;
-    [self setUpAudioUnit];
     return self;
 }
 
@@ -160,7 +162,7 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
     const int four_bytes_per_float = 4;
 	const int eight_bits_per_byte = 8;
 	AudioStreamBasicDescription format = {
-        .mSampleRate        = [self.sampleRate intValue],
+        .mSampleRate        = self.sampleRate,
         .mBytesPerPacket    = four_bytes_per_float,
         .mFramesPerPacket   = 1,
         .mBytesPerFrame     = four_bytes_per_float,
@@ -180,37 +182,12 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
     
     NSAssert(status == noErr, @"Error setting stream format: %i", (int)status);
     
-
-    
-    
     AURenderCallbackStruct callback = {
         // This is the function that will be called by the framework to produce samples
         .inputProc        = &oscillatorRenderer,
         // This is a pointer to some object we might want to use in the aforementioned function
         .inputProcRefCon  = (__bridge void *)(self)
     };
-    
-    // select which oscillator to use as callback
-//    switch (self.oscType) {
-//        case kOscTypePureTone:
-//            callback.inputProc = &pureToneGenerator;
-//            break;
-//            
-//        case kOscTypePinkNoise:
-//            callback.inputProc = &pinkNoiseGenerator;
-//            break;
-//            
-//        default:
-//            break;
-//    }
-    
-    
-//    AURenderCallbackStruct callback = {
-//        // This is the function that will be called by the framework to produce samples
-//        .inputProc        = &toneGenerator;,
-//        // This is a pointer to some object we might want to use in the aforementioned function
-//        .inputProcRefCon  = (__bridge void *)(self)
-//    };
     
     status = AudioUnitSetProperty(audioComponent,
                                   kAudioUnitProperty_SetRenderCallback,
@@ -252,7 +229,46 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
 - (void)startFrequency:(int)freq
 {
     NSLog(@"Oscillator Start");
-    self.frequency = [NSNumber numberWithInt:freq];
+    self.frequency = freq;
+    
+    // Set up tone variables
+	self.toneThetaIncrement = 2.0 * M_PI * self.frequency/self.sampleRate;
+    
+    // Set up noise variables
+    // Calculate filtered noise variables
+    // w0    = 2*pi*f0/Fs
+    // c     = cos(w0)
+    // s     = sin(w0)
+    // alpha = s*sinh( ln(2)/2 * BW * w0/s )
+    self.noisew0    = 2*M_PI*self.noiseCenterFrequency/self.sampleRate;
+    self.noisec     = cos(self.noisew0);
+    self.noises     = sin(self.noisew0);
+    self.noisealpha = self.noises*sinh(log(2)/2 * self.noiseBandwidth * self.noisew0/self.noises);
+    // Calculate filter coeffients
+    // b0 =   alpha
+    // b1 =   0
+    // b2 =  -alpha
+    // a0 =   1 + alpha
+    // a1 =  -2*cos(w0)
+    // a2 =   1 - alpha
+    self.noiseb0 =  self.noisealpha;
+    self.noiseb1 =  0;
+    self.noiseb2 =  -self.noisealpha;
+    self.noisea0 =  1 + self.noisealpha;
+    self.noisea1 =  -2*self.noisec;
+    self.noisea2 =  1 - self.noisealpha;
+    // Normalize coefficients
+    // b0 /= a0
+    // b1 /= a0
+    // b2 /= a0
+    // a1 /= a0
+    // a2 /= a0
+    self.noiseb0 /= self.noisea0;
+    self.noiseb1 /= self.noisea0;
+    self.noiseb2 /= self.noisea0;
+    self.noisea1 /= self.noisea0;
+    self.noisea2 /= self.noisea0;
+    
     
     if ([self.playbackTimer isValid])
     {
@@ -269,12 +285,5 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
     AudioComponentInstanceDispose(audioComponent);
     audioComponent = nil;
 }
-
-
-//AudioOutputUnitStop(audioComponent);
-//AudioUnitUninitialize(audioComponent);
-//AudioComponentInstanceDispose(audioComponent);
-//audioComponent = nil;
-
 
 @end
