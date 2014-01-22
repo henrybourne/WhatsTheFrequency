@@ -21,12 +21,14 @@
 @property NSTimer *playFrequencyToGuessTimer;
 @property HFBCorrectViewController *correctViewController;
 @property OscType oscType;
+@property UIColor *notGuessedColor;
+@property UIColor *guessedRightColor;
+@property UIColor *guessedWrongColor;
 
 @property (nonatomic, strong) IBOutlet UITableView *frequencyTableView;
 
 - (id)initWithOscillatorType:(OscType)osc bandwidth:(Bandwidth)bandwidth;
 - (IBAction)playFrequencyAgain:(id)sender;
 - (void)setUpViewForNextQuestion;
-- (void)clearView;
 
 @end

@@ -19,6 +19,9 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
+    
 //    HFBFrequencyViewController *mainViewController = [[HFBFrequencyViewController alloc] init];
 //    [self.window setRootViewController:mainViewController];
     

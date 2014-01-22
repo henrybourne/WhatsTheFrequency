@@ -23,8 +23,9 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f6g-g0-ITI">
-                    <rect key="frame" x="108" y="333" width="105" height="30"/>
+                    <rect key="frame" x="20" y="379" width="280" height="36"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="20"/>
                     <state key="normal" title="Next frequency">
                         <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -33,22 +34,29 @@
                         <action selector="close:" destination="-1" eventType="touchUpInside" id="LPi-Qr-Vv6"/>
                     </connections>
                 </button>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Score: 100%" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nky-Hy-SyF">
-                    <rect key="frame" x="99" y="171" width="122" height="26"/>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="280" translatesAutoresizingMaskIntoConstraints="NO" id="nky-Hy-SyF">
+                    <rect key="frame" x="20" y="246" width="280" height="52"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="22"/>
-                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <attributedString key="attributedText">
+                        <fragment content="Your overall accuracy in this session is 100%">
+                            <attributes>
+                                <color key="NSColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <font key="NSFont" size="22" name="HelveticaNeue-Thin"/>
+                                <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                            </attributes>
+                        </fragment>
+                    </attributedString>
                     <nil key="highlightedColor"/>
                 </label>
             </subviews>
-            <color key="backgroundColor" red="0.56804645060000003" green="0.84284770490000005" blue="0.50478243830000002" alpha="1" colorSpace="calibratedRGB"/>
+            <color key="backgroundColor" red="0.35686274509803922" green="0.74117647058823533" blue="0.51372549019607838" alpha="1" colorSpace="deviceRGB"/>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="f6g-g0-ITI" secondAttribute="trailing" constant="107" id="AXb-J2-1Zc"/>
-                <constraint firstAttribute="trailing" secondItem="nky-Hy-SyF" secondAttribute="trailing" constant="99" id="LK3-hF-q23"/>
-                <constraint firstItem="f6g-g0-ITI" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="108" id="O1x-uL-L4X"/>
-                <constraint firstItem="nky-Hy-SyF" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="99" id="RV8-iw-nNT"/>
-                <constraint firstItem="f6g-g0-ITI" firstAttribute="top" secondItem="nky-Hy-SyF" secondAttribute="bottom" constant="136" id="Yum-kN-H7m"/>
-                <constraint firstItem="nky-Hy-SyF" firstAttribute="top" secondItem="1" secondAttribute="top" constant="171" id="gQd-ou-SdA"/>
+                <constraint firstAttribute="trailing" secondItem="f6g-g0-ITI" secondAttribute="trailing" constant="20" id="AXb-J2-1Zc"/>
+                <constraint firstAttribute="trailing" secondItem="nky-Hy-SyF" secondAttribute="trailing" constant="20" id="LK3-hF-q23"/>
+                <constraint firstItem="f6g-g0-ITI" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" id="O1x-uL-L4X"/>
+                <constraint firstItem="nky-Hy-SyF" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" id="RV8-iw-nNT"/>
+                <constraint firstAttribute="bottom" secondItem="f6g-g0-ITI" secondAttribute="bottom" constant="153" id="gC2-fK-opn"/>
+                <constraint firstItem="nky-Hy-SyF" firstAttribute="top" secondItem="1" secondAttribute="top" constant="246" id="gQd-ou-SdA"/>
             </constraints>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>

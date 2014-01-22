@@ -35,8 +35,8 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    self.navigationItem.title = @"Challenges";
-    //self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Challenges" style:UIBarButtonItemStylePlain target:nil action:Nil];
+    self.navigationItem.title = @"What's the Frequency?";
+    self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:Nil];
     
     [self.tableView registerNib:[UINib nibWithNibName:@"HFBChallengesCell" bundle:nil] forCellReuseIdentifier:@"HFBChallengesCell"];
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];

@@ -91,7 +91,47 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
         else if (osc.oscType == kOscTypePinkNoise)
         {
             // Generate filtered noise output
-            osc.noiseFilterX = ((long)sGetNextRandomNumber()) * (float)(1.0f / LONG_MAX) * osc.fadeAmplitude;
+            // ------ White noise
+            //osc.noiseFilterX = ((long)sGetNextRandomNumber()) * (float)(1.0f / LONG_MAX) * osc.fadeAmplitude;
+            
+            // ------ Pink Noise
+            // Increment and mask index
+            osc.pinkIndex = (osc.pinkIndex + 1) & osc.pinkIndexMask;
+            
+            // If index is zero, don't update any random values
+            if (osc.pinkIndex) {
+                int numZeros = 0;
+                int n = osc.pinkIndex;
+                
+                // Determine how many trailing zeros in pinkIndex
+                // this will hang if n == 0 so test first
+                while((n & 1) == 0) {
+                    n = n >> 1;
+                    numZeros++;
+                }
+                
+                // Replace the indexed rows random value
+                // Subtract and add back to pinkRunningSum instead of adding all
+                // the random values together. only one changes each time
+                osc.pinkRunningSum -= [[osc.pinkRows objectAtIndex:numZeros] longValue];
+                long newRandom = ((long)sGetNextRandomNumber()) >> kPinkRandomShift;
+                osc.pinkRunningSum += newRandom;
+                [osc.pinkRows replaceObjectAtIndex:numZeros withObject:[NSNumber numberWithLong:newRandom]];
+            }
+            
+            // Add extra white noise value
+            long newRandom = ((long)sGetNextRandomNumber()) >> kPinkRandomShift;
+//            NSLog(@"OSC kPinkRandomShift: %lu", kPinkRandomShift);
+//            NSLog(@"OSC newRandom: %lu", newRandom);
+            long sum = osc.pinkRunningSum + newRandom;
+//            NSLog(@"OSC sum: %lu", kPinkRandomShift);
+            
+            // Scale to range of -1.0 to 0.999 and factor in volume
+            osc.noiseFilterX = osc.pinkScalar * sum * osc.fadeAmplitude;
+//            NSLog(@"OSC osc.noiseFilterX: %f osc.pinkScalar: %f osc.fadeAmplitude: %f", osc.noiseFilterX, osc.pinkScalar, osc.fadeAmplitude);
+            
+    
+            // ---- Apply Filter
             // number y = b0*x + b1*xmem1 + b2*xmem2 - a1*ymem1 - a2*ymem2;
             osc.noiseFilterY = (osc.noiseb0*osc.noiseFilterX) + (osc.noiseb1*osc.noiseFilterXmem1) + (osc.noiseb2*osc.noiseFilterXmem2) - (osc.noisea1*osc.noiseFilterYmem1) - (osc.noisea2*osc.noiseFilterYmem2);
             
@@ -121,9 +161,18 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
         self.sampleRate     = 44100;
         self.fadeDuration   = 8000;
         self.fadePosition   = 0;
-        self.fadeAmplitude      = 0.0f;
+        self.fadeAmplitude  = 0.0f;
         self.maxAmplitude   = 0.5f;
         self.oscState       = kOscStateIdle;
+        int numRows         = 5;
+        self.pinkRows       = [NSMutableArray arrayWithObjects:@0, @0, @0, @0, @0, nil];
+        self.pinkIndex      = 0;
+        self.pinkIndexMask  = (1 << numRows) - 1;
+        // Calculate max possible signed random value. extra 1 for white noise always added
+        long pmax           = (numRows + 1) * (1 << (kPinkRandomBits-1));
+        self.pinkScalar     = 1.0f / pmax;
+        self.pinkRunningSum = 0;
+
         
         [self calculateFadeCoefficients];
     }
@@ -226,7 +275,7 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
     self.oscState = kOscStateFadeOut;
 }
 
-- (void)startFrequency:(int)freq
+- (void)startFrequency:(int)freq withBandwidth:(Bandwidth)bw
 {
     NSLog(@"Oscillator Start");
     self.frequency = freq;
@@ -235,6 +284,15 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
 	self.toneThetaIncrement = 2.0 * M_PI * self.frequency/self.sampleRate;
     
     // Set up noise variables
+    self.noiseCenterFrequency = freq;
+    if (bw == kBandwidthOctave)
+    {
+        self.noiseBandwidth = 1;
+    }
+    else if (bw == kBandwidthThirdOctave)
+    {
+        self.noiseBandwidth = 0.3;
+    }
     // Calculate filtered noise variables
     // w0    = 2*pi*f0/Fs
     // c     = cos(w0)

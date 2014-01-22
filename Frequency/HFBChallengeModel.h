@@ -7,11 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-
-typedef enum {
-    kBandwidthOctave,
-    kBandwidthThirdOctave
-} Bandwidth;
+#import "HFBOscillator.h"
+#import "HFBFrequency.h"
 
 @interface HFBChallengeModel : NSObject
 
@@ -21,17 +18,19 @@ typedef enum {
 @property NSArray *frequencyState;
 @property int currentFrequencyIndex;
 @property int previousFrequencyIndex;
-@property int numberOfAnswers;
-@property int numberOfCorrectAnswers;
+@property int numberOfQuestionsPerSession;
+@property int cumulativeAccuracyPerSession;
+@property int numberOfAnswersPerQuestion;
 
 - (id)initWithBandwidth:(Bandwidth)initBandwidth;
-- (void)randomFrequency;
+- (void)newQuestion;
+- (HFBFrequency *)frequencyAtIndex:(int)index;
 - (NSString *)frequencyLabelAtIndex:(int)index;
 - (int)numberOfFrequencies;
 - (int)currentFrequencyInHz;
 - (NSString *)currentFrequencyLabel;
-- (void)didAnswer;
-- (void)didAnswerCorrectly;
-- (int)currentPercentCorrect;
+- (int)averageAccuracy;
+- (void)setAnswerState:(AnswerState)state forFrequencyAtIndex:(int)index;
+- (void)resetAllStates;
 
 @end

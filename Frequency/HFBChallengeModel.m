@@ -7,7 +7,6 @@
 //
 
 #import "HFBChallengeModel.h"
-#import "HFBFrequency.h"
 
 @implementation HFBChallengeModel
 
@@ -15,8 +14,9 @@
 {
     if (self = [super init])
     {
-        self.numberOfAnswers = 0;
-        self.numberOfCorrectAnswers = 0;
+        self.numberOfQuestionsPerSession    = 0;
+        self.numberOfAnswersPerQuestion     = 0;
+        self.cumulativeAccuracyPerSession   = 0;
     }
     return self;
 }
@@ -27,32 +27,59 @@
     self.bandwidth = initBandwidth;
     if (self.bandwidth == kBandwidthOctave)
     {
-//        self.frequencies        = [NSArray arrayWithObjects:@125, @250, @500, @1000, @2000, @4000, @8000, @16000, nil];
-//        self.frequencyLabels    = [NSArray arrayWithObjects:@"125 Hz", @"250 Hz", @"500 Hz", @"1 kHz", @"2 kHz", @"4 kHz", @"8 kHz", @"16 kHz", nil];
         self.frequencies = [NSArray arrayWithObjects:
-                            [[HFBFrequency alloc] initWithfrequency:125],
-                            [[HFBFrequency alloc] initWithfrequency:250],
-                            [[HFBFrequency alloc] initWithfrequency:500],
-                            [[HFBFrequency alloc] initWithfrequency:1000],
-                            [[HFBFrequency alloc] initWithfrequency:2000],
-                            [[HFBFrequency alloc] initWithfrequency:4000],
-                            [[HFBFrequency alloc] initWithfrequency:8000],
-                            [[HFBFrequency alloc] initWithfrequency:16000],
+                            [[HFBFrequency alloc] initWithFrequency:125 label:@"125 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:250 label:@"250 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:500 label:@"500 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:1000 label:@"1 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:2000 label:@"2 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:4000 label:@"4 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:8000 label:@"8 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:16000 label:@"16 kHz"],
                             nil];
     }
     else if (self.bandwidth == kBandwidthThirdOctave)
     {
         // 20 25 31.5 40 50 63 80 100 125 160 200 250 315 400 500 630 800 1000 1250 1600 2000 2500 3150 4000 5000 6000 8000 10000 12500 16000 20000
-        self.frequencies        = [NSArray arrayWithObjects:@100, @125, @160, @200, @250, @315, @400, @500, @630, @800, @1000, @1250, @1600, @2000, @2500, @3150, @4000, @5000, @6000, @8000, @10000, @12500, @16000, @20000, nil];
-        self.frequencyLabels    = [NSArray arrayWithObjects:@"100 Hz", @"125 Hz", @"160 Hz", @"200 Hz", @"250 Hz", @"315 Hz", @"400 Hz", @"500 Hz", @"630 Hz", @"800 Hz", @"1 kHz", @"1.25 kHz", @"1.6 kHz", @"2 kHz", @"2.5 kHz", @"3.15 kHz", @"4 kHz", @"5 kHz", @"6 kHz", @"8 kHz", @"10 kHz", @"12.5 kHz", @"16 kHz", @"20 kHz", nil];
+        self.frequencies = [NSArray arrayWithObjects:
+                            [[HFBFrequency alloc] initWithFrequency:100 label:@"100 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:125 label:@"125 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:160 label:@"160 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:200 label:@"200 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:250 label:@"250 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:315 label:@"315 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:400 label:@"400 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:500 label:@"500 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:630 label:@"630 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:800 label:@"800 Hz"],
+                            [[HFBFrequency alloc] initWithFrequency:1000 label:@"1 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:1250 label:@"1.25 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:1600 label:@"1.6 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:2000 label:@"2 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:2500 label:@"2.5 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:3150 label:@"3.15 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:4000 label:@"4 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:5000 label:@"5 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:6000 label:@"6 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:8000 label:@"8 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:10000 label:@"10 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:12500 label:@"12.5 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:16000 label:@"16 kHz"],
+                            [[HFBFrequency alloc] initWithFrequency:20000 label:@"20 kHz"],
+                            nil];
     }
     return self;
 }
 
-- (void)randomFrequency
+- (void)newQuestion
 {
+    // Set up question and answer variables
+    self.numberOfQuestionsPerSession++;
+    NSLog(@"[HFBChallengeModel newQuestion] numberOfQuestionsPerSession = %i", self.numberOfQuestionsPerSession);
+    self.numberOfAnswersPerQuestion = 0;
+    
+    // Choose a new frequency, different to last time
     self.currentFrequencyIndex = arc4random() % [self.frequencies count];
-    // Make sure the frequency is different to last time
     while (self.currentFrequencyIndex == self.previousFrequencyIndex)
     {
         self.currentFrequencyIndex = arc4random() % [self.frequencies count];
@@ -60,9 +87,16 @@
     self.previousFrequencyIndex = self.currentFrequencyIndex;
 }
 
+- (HFBFrequency *)frequencyAtIndex:(int)index
+{
+    HFBFrequency *freq = [self.frequencies objectAtIndex:index];
+    return freq;
+}
+
 - (NSString *)frequencyLabelAtIndex:(int)index
 {
-    return [self.frequencyLabels objectAtIndex:index];
+    HFBFrequency *freq = [self.frequencies objectAtIndex:index];
+    return freq.label;
 }
 
 - (int)numberOfFrequencies
@@ -72,31 +106,41 @@
 
 - (int)currentFrequencyInHz
 {
-    int freq = (int)[[self.frequencies objectAtIndex:self.currentFrequencyIndex] integerValue];
-    return freq;
+    HFBFrequency *freq = [self.frequencies objectAtIndex:self.currentFrequencyIndex];
+    return freq.frequency;
 }
 
 - (NSString *)currentFrequencyLabel
 {
-    return [self.frequencyLabels objectAtIndex:self.currentFrequencyIndex];
+    HFBFrequency *freq = [self.frequencies objectAtIndex:self.currentFrequencyIndex];
+    return freq.label;
 }
 
-- (void)didAnswer
+- (int)averageAccuracy
 {
-    self.numberOfAnswers++;
-    NSLog(@"%@ numberOfAnswers: %i", self, self.numberOfAnswers);
+    int currentAccuracy = (1.0/(double)self.numberOfAnswersPerQuestion)*100;
+    NSLog(@"[averageAccuracy] currentAccuracy = %i", currentAccuracy);
+    self.cumulativeAccuracyPerSession += currentAccuracy;
+    NSLog(@"[averageAccuracy] cumulativeAccuracyPerSession = %i", self.cumulativeAccuracyPerSession);
+    NSLog(@"[averageAccuracy] numberOfQuestionsPerSession = %i", self.numberOfQuestionsPerSession);
+    int averageAccuracy = self.cumulativeAccuracyPerSession/self.numberOfQuestionsPerSession;
+    NSLog(@"[averageAccuracy] averageAccuracy = %i", averageAccuracy);
+    return averageAccuracy;
 }
 
-- (void)didAnswerCorrectly
+- (void)setAnswerState:(AnswerState)state forFrequencyAtIndex:(int)index
 {
-    self.numberOfCorrectAnswers++;
-    NSLog(@"%@ numberOfCorrectAnswers: %i", self, self.numberOfCorrectAnswers);
+    HFBFrequency *freq = [self.frequencies objectAtIndex:index];
+    freq.state = state;
+    self.numberOfAnswersPerQuestion++;
+    NSLog(@"[setAnswerState:forFrequencyAtIndex:] numberofAnswersPerQuestion = %i", self.numberOfAnswersPerQuestion);
 }
 
-- (int)currentPercentCorrect
+- (void)resetAllStates
 {
-    int percent = ((double)self.numberOfCorrectAnswers/(double)self.numberOfAnswers)*100;
-    return percent;
+    for (HFBFrequency *freq in self.frequencies) {
+        freq.state = kAnswerNone;
+    }
 }
 
 @end

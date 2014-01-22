@@ -18,23 +18,16 @@
 
 @implementation HFBFrequencyViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self)
-    {
-        
-    }
-    
-    return self;
-}
 
 - (id)initWithOscillatorType:(OscType)osc bandwidth:(Bandwidth)bandwidth
 {
     self = [self init];
-    self.oscillator = [[HFBOscillator alloc] init];
+    self.notGuessedColor    = [UIColor whiteColor];
+    self.guessedRightColor  = [UIColor colorWithRed:91/255.0f green:189/255.0f blue:131/255.0f alpha:1.0f];
+    self.guessedWrongColor  = [UIColor colorWithRed:217/255.0f green:130/255.0f blue:132/255.0f alpha:1.0f];
+    self.oscillator         = [[HFBOscillator alloc] init];
     self.oscillator.oscType = osc;
-    self.challengeModel = [[HFBChallengeModel alloc] initWithBandwidth:bandwidth];
+    self.challengeModel     = [[HFBChallengeModel alloc] initWithBandwidth:bandwidth];
     return self;
 }
 
@@ -67,6 +60,7 @@
     self.frequencyTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.frequencyTableView.alwaysBounceVertical = NO;
     self.frequencyTableView.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    [self.frequencyTableView sizeToFit];
 
 }
 
@@ -77,6 +71,11 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated
+{
+    [self.oscillator stopFrequency];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
 {
     [self.oscillator stopAudioUnit];
 }
@@ -94,36 +93,31 @@
     // Stop current playback if any
     [self.oscillator stopFrequency];
     // Tell the model to get a new random frequency
-    [self.challengeModel randomFrequency];
+    [self.challengeModel newQuestion];
     // Play the new frequency
-    self.oscillator.noiseBandwidth = 1;
-    self.oscillator.noiseCenterFrequency = [self.challengeModel currentFrequencyInHz];
-    [self.oscillator startFrequency:[self.challengeModel currentFrequencyInHz]];
+    [self.oscillator startFrequency:[self.challengeModel currentFrequencyInHz] withBandwidth:self.challengeModel.bandwidth];
 }
 
 - (void)replayFrequency
 {
-    [self.oscillator startFrequency:[self.challengeModel currentFrequencyInHz]];
+    [self.oscillator startFrequency:[self.challengeModel currentFrequencyInHz] withBandwidth:self.challengeModel.bandwidth];
 }
 
 - (void)setUpViewForNextQuestion
 {
     NSLog(@"[HFBFrequencyViewController setUpViewForNextQuestion]");
+    [self.challengeModel resetAllStates];
     [self.frequencyTableView reloadData];
 
 }
 
-- (void)clearView
-{
-//    self.frequencyTableView
-}
 
 #pragma mark HFBCorrectViewControllerDelegate
 - (void)didDismissCorrectViewController
 {
     [self dismissViewControllerAnimated:YES completion:^(void){
         NSLog(@"Completed dismissing view controller");
-        [self nextFrequency];
+        //[self nextFrequency];
     }];
 }
 
@@ -131,22 +125,21 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self.challengeModel didAnswer];
-    
     if (indexPath.row != [self.challengeModel currentFrequencyIndex])
     {
         // If guess was wrong, then mark the selection as incorrect
-        NSLog(@"Incorrect Guess: %@", [self.challengeModel frequencyLabelAtIndex:(int)indexPath.row]);
+        NSLog(@"[HFBFrequencyViewController tableView:didSelectRowatIndexPath:] Incorrect Guess: %@", [self.challengeModel frequencyLabelAtIndex:(int)indexPath.row]);
+        [self.challengeModel setAnswerState:kAnswerIncorrect forFrequencyAtIndex:(int)indexPath.row];
         UITableViewCell *cell = [self.frequencyTableView cellForRowAtIndexPath:indexPath];
-        [cell setBackgroundColor:[UIColor colorWithRed:178/255.0f green:95/255.0f blue:96/255.0f alpha:1.0f]];
+        [cell setBackgroundColor:self.guessedWrongColor];
     }
     else
     {
         // If guess was correct, show correct view
-        NSLog(@"Correct Guess: %@", [self.challengeModel frequencyLabelAtIndex:(int)indexPath.row]);
-        [self.challengeModel didAnswerCorrectly];
+        NSLog(@"[HFBFrequencyViewController tableView:didSelectRowatIndexPath:] Correct Guess: %@", [self.challengeModel frequencyLabelAtIndex:(int)indexPath.row]);
+        [self.challengeModel setAnswerState:kAnswerCorrect forFrequencyAtIndex:(int)indexPath.row];
         UITableViewCell *cell = [self.frequencyTableView cellForRowAtIndexPath:indexPath];
-        [cell setBackgroundColor:[UIColor colorWithRed:145/255.0f green:215/255.0f blue:129/255.0f alpha:1.0f]];
+        [cell setBackgroundColor:self.guessedRightColor];
         [self performSelector:@selector(showCorrectViewController:) withObject:nil afterDelay:0];
     }
 }
@@ -157,7 +150,7 @@
     self.correctViewController.delegate = self;
     self.correctViewController.challengeModel = self.challengeModel;
     [self presentViewController:self.correctViewController animated:YES completion:^(void){
-        NSLog(@"Completed Presenting correctViewController");
+        NSLog(@"[HFBFrequencyViewController showCorrectViewController:] Completed Presenting correctViewController");
         [self setUpViewForNextQuestion];
     }];
 }
@@ -183,8 +176,22 @@
         cell = [nib objectAtIndex:0];
     }
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
-    cell.frequencyLabel.text = [self.challengeModel frequencyLabelAtIndex:indexPath.row];
-    cell.backgroundColor = [UIColor whiteColor];
+    
+    HFBFrequency *freq = [self.challengeModel frequencyAtIndex:(int)indexPath.row];
+    cell.frequencyLabel.text = freq.label;
+    if (freq.state == kAnswerIncorrect)
+    {
+        cell.backgroundColor = self.guessedWrongColor;
+    }
+    else if (freq.state == kAnswerCorrect)
+    {
+        cell.backgroundColor = self.guessedRightColor;
+    }
+    else if (freq.state == kAnswerNone)
+    {
+        cell.backgroundColor = self.notGuessedColor;
+    }
+
     return cell;
 }
 

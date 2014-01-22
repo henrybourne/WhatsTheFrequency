@@ -10,6 +10,7 @@
 		3B168F30187C3086001F239A /* HFBChallengeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B168F2F187C3086001F239A /* HFBChallengeModel.m */; };
 		3BA9F158187B1AD300F9FD44 /* HFBFrequencyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA9F157187B1AD300F9FD44 /* HFBFrequencyCell.m */; };
 		3BA9F15A187B1AF200F9FD44 /* HFBFrequencyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BA9F159187B1AF200F9FD44 /* HFBFrequencyCell.xib */; };
+		BA1C0D54188E5E4300B68CE6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA1C0D53188E5E4300B68CE6 /* AVFoundation.framework */; };
 		BA4B8D3A188BF82F006654D4 /* HFBOscillator.m in Sources */ = {isa = PBXBuildFile; fileRef = BA4B8D39188BF82F006654D4 /* HFBOscillator.m */; };
 		BA5247371884862E008DF106 /* HFBChallengesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5247361884862E008DF106 /* HFBChallengesViewController.m */; };
 		BA52473918848761008DF106 /* HFBChallengesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BA52473818848761008DF106 /* HFBChallengesCell.xib */; };
@@ -50,6 +51,7 @@
 		3BA9F156187B1AD300F9FD44 /* HFBFrequencyCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBFrequencyCell.h; sourceTree = "<group>"; };
 		3BA9F157187B1AD300F9FD44 /* HFBFrequencyCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBFrequencyCell.m; sourceTree = "<group>"; };
 		3BA9F159187B1AF200F9FD44 /* HFBFrequencyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HFBFrequencyCell.xib; sourceTree = "<group>"; };
+		BA1C0D53188E5E4300B68CE6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		BA4B8D38188BF82F006654D4 /* HFBOscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBOscillator.h; sourceTree = "<group>"; };
 		BA4B8D39188BF82F006654D4 /* HFBOscillator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBOscillator.m; sourceTree = "<group>"; };
 		BA5247351884862E008DF106 /* HFBChallengesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBChallengesViewController.h; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA1C0D54188E5E4300B68CE6 /* AVFoundation.framework in Frameworks */,
 				BA7025BF1879AEAA00EC48CB /* AudioToolbox.framework in Frameworks */,
 				BA7588651877645300A0CB55 /* CoreGraphics.framework in Frameworks */,
 				BA7588671877645300A0CB55 /* UIKit.framework in Frameworks */,
@@ -131,6 +134,7 @@
 		BA7588611877645300A0CB55 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BA1C0D53188E5E4300B68CE6 /* AVFoundation.framework */,
 				BA7025BE1879AEAA00EC48CB /* AudioToolbox.framework */,
 				BA7588621877645300A0CB55 /* Foundation.framework */,
 				BA7588641877645300A0CB55 /* CoreGraphics.framework */,
@@ -245,7 +249,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = HFB;
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Henry Bourne";
 				TargetAttributes = {
 					BA75885E1877645300A0CB55 = {
@@ -358,7 +362,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -397,7 +400,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -461,7 +463,6 @@
 		BA75888F1877645300A0CB55 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Frequency.app/Frequency";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -484,7 +485,6 @@
 		BA7588901877645300A0CB55 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Frequency.app/Frequency";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",

@@ -21,10 +21,20 @@ typedef enum {
     kOscTypePinkNoise
 } OscType;
 
+typedef enum {
+    kBandwidthOctave,
+    kBandwidthThirdOctave
+} Bandwidth;
+
+#define kPinkMaxRandomRows		32
+#define kPinkRandomBits			30
+#define kPinkRandomShift		((sizeof(long)*8)-kPinkRandomBits)
 
 @interface HFBOscillator : NSObject
 {
 	AudioComponentInstance audioComponent;
+    
+    
 }
 
 @property OscType   oscType;
@@ -41,7 +51,13 @@ typedef enum {
 // Tone Properties
 @property double toneTheta;
 @property double toneThetaIncrement;
-// Filtered Noise Properties
+// Pink Noise Properties
+@property NSMutableArray *pinkRows;
+@property long  pinkRunningSum;     // Used to optimize summing of generators
+@property int   pinkIndex;			// Incremented each sample
+@property int   pinkIndexMask;		// Index wrapped by &ing with this mask
+@property float pinkScalar;         // Used to scale within range of -1.0 to 1.0
+// Noise Filter Properties
 @property double noiseCenterFrequency;
 @property double noiseBandwidth;
 @property double noisew0;
@@ -63,7 +79,7 @@ typedef enum {
 
 - (void)setUpAudioUnit;
 - (void)stopFrequency;
-- (void)startFrequency:(int)freq;
+- (void)startFrequency:(int)freq withBandwidth:(Bandwidth)bw;
 - (void)stopAudioUnit;
 
 @end
