@@ -8,7 +8,7 @@
 
 #import "HFBChallengesViewController.h"
 #import "HFBChallengesCell.h"
-#import "HFBFrequencyViewController.h"
+#import "HFBChallengeViewController.h"
 
 @interface HFBChallengesViewController ()
 
@@ -35,12 +35,19 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     // self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    self.navigationItem.title = @"What's the Frequency?";
+    self.navigationItem.title = @"Challenges";
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:Nil];
-    
     [self.tableView registerNib:[UINib nibWithNibName:@"HFBChallengesCell" bundle:nil] forCellReuseIdentifier:@"HFBChallengesCell"];
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     self.tableView.alwaysBounceVertical = NO;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    //[self.navigationController setToolbarHidden:YES animated:NO];
+    [self.navigationController setToolbarHidden:YES];
+    [self.tableView deselectRowAtIndexPath:self.tableView.indexPathForSelectedRow animated:YES];
+
 }
 
 - (void)didReceiveMemoryWarning
@@ -133,34 +140,35 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    HFBFrequencyViewController *frequencyViewController;
+    HFBChallengeViewController *frequencyViewController;
     
     if (indexPath.section == 0)
     {
         if (indexPath.row == 0)
         {
-            frequencyViewController = [[HFBFrequencyViewController alloc] initWithOscillatorType:kOscTypePureTone bandwidth:kBandwidthOctave];
-            frequencyViewController.navigationItem.title = @"Pure Tones";
+            frequencyViewController = [[HFBChallengeViewController alloc] initWithOscillatorType:kOscTypePureTone bandwidth:kBandwidthOctave];
+//            frequencyViewController.navigationItem.title = @"Pure Tones";
         }
         else if (indexPath.row == 1)
         {
-            frequencyViewController = [[HFBFrequencyViewController alloc] initWithOscillatorType:kOscTypePureTone bandwidth:kBandwidthThirdOctave];
-            frequencyViewController.navigationItem.title = @"Pure Tones";
+            frequencyViewController = [[HFBChallengeViewController alloc] initWithOscillatorType:kOscTypePureTone bandwidth:kBandwidthThirdOctave];
+//            frequencyViewController.navigationItem.title = @"Pure Tones";
         }
     }
     else if (indexPath.section == 1)
     {
         if (indexPath.row == 0)
         {
-            frequencyViewController = [[HFBFrequencyViewController alloc] initWithOscillatorType:kOscTypePinkNoise bandwidth:kBandwidthOctave];
-            frequencyViewController.navigationItem.title = @"Filtered Noise";
+            frequencyViewController = [[HFBChallengeViewController alloc] initWithOscillatorType:kOscTypePinkNoise bandwidth:kBandwidthOctave];
+//            frequencyViewController.navigationItem.title = @"Filtered Noise";
         }
         else if (indexPath.row == 1)
         {
-            frequencyViewController = [[HFBFrequencyViewController alloc] initWithOscillatorType:kOscTypePinkNoise bandwidth:kBandwidthThirdOctave];
-            frequencyViewController.navigationItem.title = @"Filtered Noise";
+            frequencyViewController = [[HFBChallengeViewController alloc] initWithOscillatorType:kOscTypePinkNoise bandwidth:kBandwidthThirdOctave];
+//            frequencyViewController.navigationItem.title = @"Filtered Noise";
         }
     }
+    frequencyViewController.navigationItem.title = @"What's the Frequency?";
     [self.navigationController pushViewController:frequencyViewController animated:YES];
 }
 

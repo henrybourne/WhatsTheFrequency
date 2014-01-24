@@ -7,7 +7,6 @@
 //
 
 #import "HFBAppDelegate.h"
-#import "HFBFrequencyViewController.h"
 #import "HFBChallengesViewController.h"
 
 @implementation HFBAppDelegate
@@ -19,14 +18,15 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     
+    
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
     [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
     
-//    HFBFrequencyViewController *mainViewController = [[HFBFrequencyViewController alloc] init];
-//    [self.window setRootViewController:mainViewController];
-    
     HFBChallengesViewController *challengesViewController = [[HFBChallengesViewController alloc] initWithStyle:UITableViewStyleGrouped];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:challengesViewController];
+    navigationController.navigationBar.tintColor = [UIColor colorWithRed:50/255.0f green:50/255.0f blue:50/255.0f alpha:1.0f];
+    navigationController.toolbar.tintColor = [UIColor colorWithRed:50/255.0f green:50/255.0f blue:50/255.0f alpha:1.0f];
+
     
     [self.window setRootViewController:navigationController];
     

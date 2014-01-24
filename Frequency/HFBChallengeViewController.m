@@ -1,33 +1,41 @@
 //
-//  HFBFrequencyViewController.m
+//  HFBChallengeViewController.m
 //  Frequency
 //
-//  Created by Henry Bourne on 03/01/2014.
+//  Created by Henry Calrec on 2014/01/23.
 //  Copyright (c) 2014 Henry Bourne. All rights reserved.
 //
 
-#import "HFBFrequencyViewController.h"
+#import "HFBChallengeViewController.h"
 #import <AudioToolbox/AudioToolbox.h>
-#import "HFBFrequencyCell.h"
 
-@interface HFBFrequencyViewController ()
-
+@interface HFBChallengeViewController ()
 
 @end
 
+@implementation HFBChallengeViewController
 
-@implementation HFBFrequencyViewController
-
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    self = [super initWithStyle:style];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
 
 - (id)initWithOscillatorType:(OscType)osc bandwidth:(Bandwidth)bandwidth
 {
-    self = [self init];
+    self = [self initWithStyle:UITableViewStylePlain];
     self.notGuessedColor    = [UIColor whiteColor];
     self.guessedRightColor  = [UIColor colorWithRed:91/255.0f green:189/255.0f blue:131/255.0f alpha:1.0f];
     self.guessedWrongColor  = [UIColor colorWithRed:217/255.0f green:130/255.0f blue:132/255.0f alpha:1.0f];
+    self.oscType            = osc;
+    self.bandwidth          = bandwidth;
     self.oscillator         = [[HFBOscillator alloc] init];
-    self.oscillator.oscType = osc;
+    self.oscillator.oscType = self.oscType;
     self.challengeModel     = [[HFBChallengeModel alloc] initWithBandwidth:bandwidth];
+    
     return self;
 }
 
@@ -35,48 +43,47 @@
 {
     NSLog(@"[HFBFrequencyViewController viewDidLoad]");
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
-
+    
     self.view.backgroundColor = [UIColor colorWithRed:239/255.0f green:239/255.0f blue:244/255.0f alpha:1.0f];
-//    UIBezierPath *boxPath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0,self.view.frame.size.width, 90)];
-//    //shape layer for the line
-//    CAShapeLayer *box = [CAShapeLayer layer];
-//    box.path = [boxPath CGPath];
-//    box.fillColor = [[UIColor colorWithRed:239/255.0f green:239/255.0f blue:244/255.0f alpha:1.0f] CGColor];
-//    box.frame = CGRectMake(0.0, 64.0, self.view.frame.size.width,60);
-//    [self.view.layer insertSublayer:box atIndex:0];
-    
-    UIBezierPath *linePath = [UIBezierPath bezierPathWithRect:CGRectMake(0, 0,self.view.frame.size.width, 0.5)];
-    //shape layer for the line
-    CAShapeLayer *line = [CAShapeLayer layer];
-    line.path = [linePath CGPath];
-    line.fillColor = [[UIColor colorWithRed:200/255.0f green:199/255.0f blue:204/255.0f alpha:1.0f] CGColor];
-    line.frame = CGRectMake(0.0, 154.0, self.view.frame.size.width,0.5);
-    [self.view.layer addSublayer:line];
-    
 
+    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.tableView.alwaysBounceVertical = NO;
+    self.tableView.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0);
     
-    [self.frequencyTableView registerNib:[UINib nibWithNibName:@"HFBFrequencyCell" bundle:nil] forCellReuseIdentifier:@"HFBFrequencyCell"];
-    self.frequencyTableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.frequencyTableView.alwaysBounceVertical = NO;
-    self.frequencyTableView.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0);
-    [self.frequencyTableView sizeToFit];
-
+    if (self.bandwidth == kBandwidthOctave)
+    {
+        self.tableView.backgroundColor = [UIColor colorWithRed:239/255.0f green:239/255.0f blue:244/255.0f alpha:1.0f];
+    }
+    else if (self.bandwidth == kBandwidthThirdOctave)
+    {
+        self.tableView.backgroundColor = [UIColor whiteColor];
+    }
+    
+    [self.navigationController setToolbarHidden:NO];
+    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    UIBarButtonItem *playAgain = [[UIBarButtonItem alloc] initWithTitle:@"Play Sample" style:UIBarButtonItemStylePlain target:self action:@selector(replayFrequency)];
+    NSArray *toolbarItems = [NSArray arrayWithObjects:flexibleSpace, playAgain, flexibleSpace, nil];
+    [self setToolbarItems:toolbarItems animated:YES];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    NSLog(@"[HFBChallengeViewController viewDidAppear]");
     [self.oscillator setUpAudioUnit];
     [self performSelector:@selector(nextFrequency) withObject:nil afterDelay:0];
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+    NSLog(@"[HFBChallengeViewController viewWillDisappear]");
     [self.oscillator stopFrequency];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+    NSLog(@"[HFBChallengeViewController viewDidDisappear]");
     [self.oscillator stopAudioUnit];
 }
 
@@ -107,8 +114,8 @@
 {
     NSLog(@"[HFBFrequencyViewController setUpViewForNextQuestion]");
     [self.challengeModel resetAllStates];
-    [self.frequencyTableView reloadData];
-
+    [self.tableView reloadData];
+    
 }
 
 
@@ -130,7 +137,7 @@
         // If guess was wrong, then mark the selection as incorrect
         NSLog(@"[HFBFrequencyViewController tableView:didSelectRowatIndexPath:] Incorrect Guess: %@", [self.challengeModel frequencyLabelAtIndex:(int)indexPath.row]);
         [self.challengeModel setAnswerState:kAnswerIncorrect forFrequencyAtIndex:(int)indexPath.row];
-        UITableViewCell *cell = [self.frequencyTableView cellForRowAtIndexPath:indexPath];
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
         [cell setBackgroundColor:self.guessedWrongColor];
     }
     else
@@ -138,7 +145,7 @@
         // If guess was correct, show correct view
         NSLog(@"[HFBFrequencyViewController tableView:didSelectRowatIndexPath:] Correct Guess: %@", [self.challengeModel frequencyLabelAtIndex:(int)indexPath.row]);
         [self.challengeModel setAnswerState:kAnswerCorrect forFrequencyAtIndex:(int)indexPath.row];
-        UITableViewCell *cell = [self.frequencyTableView cellForRowAtIndexPath:indexPath];
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
         [cell setBackgroundColor:self.guessedRightColor];
         [self performSelector:@selector(showCorrectViewController:) withObject:nil afterDelay:0];
     }
@@ -167,18 +174,16 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *cellIdentifier = @"HFBFrequencyCell";
-    HFBFrequencyCell *cell = (HFBFrequencyCell *)[tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"HFBFrequencyCell"];
     
     if (cell == nil)
     {
-        NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"HFBFrequencyCell" owner:self options:nil];
-        cell = [nib objectAtIndex:0];
+         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"HFBFrequencyCell"];
     }
     [cell setSelectionStyle:UITableViewCellSelectionStyleNone];
     
     HFBFrequency *freq = [self.challengeModel frequencyAtIndex:(int)indexPath.row];
-    cell.frequencyLabel.text = freq.label;
+    cell.textLabel.text = freq.label;
     if (freq.state == kAnswerIncorrect)
     {
         cell.backgroundColor = self.guessedWrongColor;
@@ -191,17 +196,59 @@
     {
         cell.backgroundColor = self.notGuessedColor;
     }
-
+    
     return cell;
 }
 
-
-#pragma mark IBActions
-
-- (IBAction)playFrequencyAgain:(id)sender
+/*
+// Override to support conditional editing of the table view.
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    [self performSelector:@selector(replayFrequency) withObject:nil afterDelay:0];
+    // Return NO if you do not want the specified item to be editable.
+    return YES;
+}
+*/
+
+/*
+// Override to support editing the table view.
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // Delete the row from the data source
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    }   
+    else if (editingStyle == UITableViewCellEditingStyleInsert) {
+        // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+    }   
+}
+*/
+
+/*
+// Override to support rearranging the table view.
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+{
+}
+*/
+
+/*
+// Override to support conditional rearranging of the table view.
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Return NO if you do not want the item to be re-orderable.
+    return YES;
+}
+*/
+
+/*
+#pragma mark - Navigation
+
+// In a story board-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
 }
 
+ */
 
 @end

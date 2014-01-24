@@ -162,7 +162,7 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
         self.fadeDuration   = 8000;
         self.fadePosition   = 0;
         self.fadeAmplitude  = 0.0f;
-        self.maxAmplitude   = 0.5f;
+        self.maxAmplitude   = 0.4f;
         self.oscState       = kOscStateIdle;
         int numRows         = 5;
         self.pinkRows       = [NSMutableArray arrayWithObjects:@0, @0, @0, @0, @0, nil];
@@ -254,6 +254,14 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
     NSAssert(status == noErr, @"Error starting unit: %i", (int)status);
 }
 
+- (void)stopAudioUnit
+{
+    AudioOutputUnitStop(audioComponent);
+    AudioUnitUninitialize(audioComponent);
+    AudioComponentInstanceDispose(audioComponent);
+    audioComponent = nil;
+}
+
 - (void)calculateFadeCoefficients
 {
     self.fadeCoefficients = [[NSMutableArray alloc] init];
@@ -262,17 +270,6 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
         double currentCoeff = (i * self.maxAmplitude) / self.fadeDuration;
         [self.fadeCoefficients addObject:[NSNumber numberWithDouble:currentCoeff]];
     }
-}
-
-- (void)stopFrequencyWithTimer:(NSTimer *)timer
-{
-    [self stopFrequency];
-}
-
-- (void)stopFrequency
-{
-    NSLog(@"Oscillator Stop");
-    self.oscState = kOscStateFadeOut;
 }
 
 - (void)startFrequency:(int)freq withBandwidth:(Bandwidth)bw
@@ -336,12 +333,15 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
     self.oscState = kOscStateFadeIn;
 }
 
-- (void)stopAudioUnit
+- (void)stopFrequencyWithTimer:(NSTimer *)timer
 {
-    AudioOutputUnitStop(audioComponent);
-    AudioUnitUninitialize(audioComponent);
-    AudioComponentInstanceDispose(audioComponent);
-    audioComponent = nil;
+    [self stopFrequency];
+}
+
+- (void)stopFrequency
+{
+    NSLog(@"Oscillator Stop");
+    self.oscState = kOscStateFadeOut;
 }
 
 @end

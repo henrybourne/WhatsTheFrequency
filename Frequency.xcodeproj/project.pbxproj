@@ -8,8 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3B168F30187C3086001F239A /* HFBChallengeModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B168F2F187C3086001F239A /* HFBChallengeModel.m */; };
-		3BA9F158187B1AD300F9FD44 /* HFBFrequencyCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BA9F157187B1AD300F9FD44 /* HFBFrequencyCell.m */; };
-		3BA9F15A187B1AF200F9FD44 /* HFBFrequencyCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BA9F159187B1AF200F9FD44 /* HFBFrequencyCell.xib */; };
 		BA1C0D54188E5E4300B68CE6 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA1C0D53188E5E4300B68CE6 /* AVFoundation.framework */; };
 		BA4B8D3A188BF82F006654D4 /* HFBOscillator.m in Sources */ = {isa = PBXBuildFile; fileRef = BA4B8D39188BF82F006654D4 /* HFBOscillator.m */; };
 		BA5247371884862E008DF106 /* HFBChallengesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA5247361884862E008DF106 /* HFBChallengesViewController.m */; };
@@ -28,11 +26,10 @@
 		BA75887E1877645300A0CB55 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA7588661877645300A0CB55 /* UIKit.framework */; };
 		BA7588861877645300A0CB55 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BA7588841877645300A0CB55 /* InfoPlist.strings */; };
 		BA7588881877645300A0CB55 /* FrequencyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7588871877645300A0CB55 /* FrequencyTests.m */; };
-		BA7588961877661300A0CB55 /* HFBFrequencyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BA7588941877661300A0CB55 /* HFBFrequencyViewController.m */; };
-		BA7588971877661300A0CB55 /* HFBFrequencyViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BA7588951877661300A0CB55 /* HFBFrequencyViewController.xib */; };
 		BAA20D59187F535500014FEB /* HFBCorrectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAA20D57187F535500014FEB /* HFBCorrectViewController.m */; };
 		BAA20D5A187F535500014FEB /* HFBCorrectViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BAA20D58187F535500014FEB /* HFBCorrectViewController.xib */; };
 		BAC02BF6188D9AF500FE388B /* HFBFrequency.m in Sources */ = {isa = PBXBuildFile; fileRef = BAC02BF5188D9AF500FE388B /* HFBFrequency.m */; };
+		BAE836F4189148ED009A6E8D /* HFBChallengeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE836F3189148ED009A6E8D /* HFBChallengeViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,9 +45,6 @@
 /* Begin PBXFileReference section */
 		3B168F2E187C3086001F239A /* HFBChallengeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBChallengeModel.h; sourceTree = "<group>"; };
 		3B168F2F187C3086001F239A /* HFBChallengeModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBChallengeModel.m; sourceTree = "<group>"; };
-		3BA9F156187B1AD300F9FD44 /* HFBFrequencyCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBFrequencyCell.h; sourceTree = "<group>"; };
-		3BA9F157187B1AD300F9FD44 /* HFBFrequencyCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBFrequencyCell.m; sourceTree = "<group>"; };
-		3BA9F159187B1AF200F9FD44 /* HFBFrequencyCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HFBFrequencyCell.xib; sourceTree = "<group>"; };
 		BA1C0D53188E5E4300B68CE6 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		BA4B8D38188BF82F006654D4 /* HFBOscillator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBOscillator.h; sourceTree = "<group>"; };
 		BA4B8D39188BF82F006654D4 /* HFBOscillator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBOscillator.m; sourceTree = "<group>"; };
@@ -76,14 +70,13 @@
 		BA7588831877645300A0CB55 /* FrequencyTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FrequencyTests-Info.plist"; sourceTree = "<group>"; };
 		BA7588851877645300A0CB55 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		BA7588871877645300A0CB55 /* FrequencyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FrequencyTests.m; sourceTree = "<group>"; };
-		BA7588931877661300A0CB55 /* HFBFrequencyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBFrequencyViewController.h; sourceTree = "<group>"; };
-		BA7588941877661300A0CB55 /* HFBFrequencyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBFrequencyViewController.m; sourceTree = "<group>"; };
-		BA7588951877661300A0CB55 /* HFBFrequencyViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HFBFrequencyViewController.xib; sourceTree = "<group>"; };
 		BAA20D56187F535500014FEB /* HFBCorrectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBCorrectViewController.h; sourceTree = "<group>"; };
 		BAA20D57187F535500014FEB /* HFBCorrectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBCorrectViewController.m; sourceTree = "<group>"; };
 		BAA20D58187F535500014FEB /* HFBCorrectViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HFBCorrectViewController.xib; sourceTree = "<group>"; };
 		BAC02BF4188D9AF500FE388B /* HFBFrequency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBFrequency.h; sourceTree = "<group>"; };
 		BAC02BF5188D9AF500FE388B /* HFBFrequency.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBFrequency.m; sourceTree = "<group>"; };
+		BAE836F2189148ED009A6E8D /* HFBChallengeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HFBChallengeViewController.h; sourceTree = "<group>"; };
+		BAE836F3189148ED009A6E8D /* HFBChallengeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HFBChallengeViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,16 +150,12 @@
 				BAA20D56187F535500014FEB /* HFBCorrectViewController.h */,
 				BAA20D57187F535500014FEB /* HFBCorrectViewController.m */,
 				BAA20D58187F535500014FEB /* HFBCorrectViewController.xib */,
-				3BA9F156187B1AD300F9FD44 /* HFBFrequencyCell.h */,
-				3BA9F157187B1AD300F9FD44 /* HFBFrequencyCell.m */,
-				3BA9F159187B1AF200F9FD44 /* HFBFrequencyCell.xib */,
 				BAC02BF4188D9AF500FE388B /* HFBFrequency.h */,
 				BAC02BF5188D9AF500FE388B /* HFBFrequency.m */,
 				3B168F2E187C3086001F239A /* HFBChallengeModel.h */,
 				3B168F2F187C3086001F239A /* HFBChallengeModel.m */,
-				BA7588931877661300A0CB55 /* HFBFrequencyViewController.h */,
-				BA7588941877661300A0CB55 /* HFBFrequencyViewController.m */,
-				BA7588951877661300A0CB55 /* HFBFrequencyViewController.xib */,
+				BAE836F2189148ED009A6E8D /* HFBChallengeViewController.h */,
+				BAE836F3189148ED009A6E8D /* HFBChallengeViewController.m */,
 				BA4B8D38188BF82F006654D4 /* HFBOscillator.h */,
 				BA4B8D39188BF82F006654D4 /* HFBOscillator.m */,
 				BA7588741877645300A0CB55 /* Images.xcassets */,
@@ -283,12 +272,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BA7588971877661300A0CB55 /* HFBFrequencyViewController.xib in Resources */,
 				BA75886D1877645300A0CB55 /* InfoPlist.strings in Resources */,
 				BA7588751877645300A0CB55 /* Images.xcassets in Resources */,
 				BAA20D5A187F535500014FEB /* HFBCorrectViewController.xib in Resources */,
 				BA52473918848761008DF106 /* HFBChallengesCell.xib in Resources */,
-				3BA9F15A187B1AF200F9FD44 /* HFBFrequencyCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,14 +295,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				BA75886F1877645300A0CB55 /* main.m in Sources */,
-				BA7588961877661300A0CB55 /* HFBFrequencyViewController.m in Sources */,
+				BAE836F4189148ED009A6E8D /* HFBChallengeViewController.m in Sources */,
 				BA7588731877645300A0CB55 /* HFBAppDelegate.m in Sources */,
 				BAC02BF6188D9AF500FE388B /* HFBFrequency.m in Sources */,
 				3B168F30187C3086001F239A /* HFBChallengeModel.m in Sources */,
 				BA4B8D3A188BF82F006654D4 /* HFBOscillator.m in Sources */,
 				BA52473C188487BB008DF106 /* HFBChallengesCell.m in Sources */,
 				BAA20D59187F535500014FEB /* HFBCorrectViewController.m in Sources */,
-				3BA9F158187B1AD300F9FD44 /* HFBFrequencyCell.m in Sources */,
 				BA5247371884862E008DF106 /* HFBChallengesViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

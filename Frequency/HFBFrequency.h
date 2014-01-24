@@ -9,17 +9,17 @@
 #import <Foundation/Foundation.h>
 
 typedef enum {
-    kNotGuessed,
-    kGuessedWrong,
-    kGuessedRight
-} GuessedState;
+    kAnswerNone,
+    kAnswerIncorrect,
+    kAnswerCorrect
+} AnswerState;
 
 @interface HFBFrequency : NSObject
 
 @property int frequency;
 @property NSString *label;
-@property GuessedState state;
+@property AnswerState state;
 
-- (id)initWithfrequency:(int)freq;
+- (id)initWithFrequency:(int)freq label:(NSString *)lab;
 
 @end

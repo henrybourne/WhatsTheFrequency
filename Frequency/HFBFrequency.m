@@ -10,13 +10,13 @@
 
 @implementation HFBFrequency
 
-- (id)initWithfrequency:(int)freq
+- (id)initWithFrequency:(int)freq label:(NSString *)lab
 {
     if (self = [self init])
     {
-        self.frequency = freq;
-        self.state = kNotGuessed;
-        self.label = [NSString stringWithFormat:@"%i Hz", self.frequency];
+        self.frequency  = freq;
+        self.label      = lab;
+        self.state      = kAnswerNone;
     }
     return self;
 }
