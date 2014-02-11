@@ -61,16 +61,22 @@
     
     [self.navigationController setToolbarHidden:NO];
     UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-    UIBarButtonItem *playAgain = [[UIBarButtonItem alloc] initWithTitle:@"Play Sample" style:UIBarButtonItemStylePlain target:self action:@selector(replayFrequency)];
+    UIBarButtonItem *playAgain = [[UIBarButtonItem alloc] initWithTitle:@"Play Again" style:UIBarButtonItemStylePlain target:self action:@selector(replayFrequency)];
+    playAgain.accessibilityHint = @"Plays the audio to guess";
     NSArray *toolbarItems = [NSArray arrayWithObjects:flexibleSpace, playAgain, flexibleSpace, nil];
     [self setToolbarItems:toolbarItems animated:YES];
+    
+    [self.oscillator setUpAudioUnit];
+    
+    //UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, self.navigationItem.title);
+    //NSLog(@"!!!! %i", [self.navigationItem.titleView isAccessibilityElement]);
     
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     NSLog(@"[HFBChallengeViewController viewDidAppear]");
-    [self.oscillator setUpAudioUnit];
+
     [self performSelector:@selector(nextFrequency) withObject:nil afterDelay:0];
     
 }
@@ -79,13 +85,19 @@
 {
     NSLog(@"[HFBChallengeViewController viewWillDisappear]");
     [self.oscillator stopFrequency];
+
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
     NSLog(@"[HFBChallengeViewController viewDidDisappear]");
-    [self.oscillator stopAudioUnit];
+    if ([self isBeingDismissed])
+    {
+        NSLog(@"[HFBChallengeViewController viewDidDisappear] Stop Audio Unit");
+        [self.oscillator stopAudioUnit];
+    }
 }
+
 
 - (void)didReceiveMemoryWarning
 {
@@ -184,6 +196,7 @@
     
     HFBFrequency *freq = [self.challengeModel frequencyAtIndex:(int)indexPath.row];
     cell.textLabel.text = freq.label;
+    cell.accessibilityHint = [NSString stringWithFormat:@"Guess a frequency of %@", freq.label];
     if (freq.state == kAnswerIncorrect)
     {
         cell.backgroundColor = self.guessedWrongColor;

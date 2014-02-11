@@ -159,7 +159,7 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
     {
         self.frequency      = 1000;
         self.sampleRate     = 44100;
-        self.fadeDuration   = 8000;
+        self.fadeDuration   = 200;
         self.fadePosition   = 0;
         self.fadeAmplitude  = 0.0f;
         self.maxAmplitude   = 0.4f;
