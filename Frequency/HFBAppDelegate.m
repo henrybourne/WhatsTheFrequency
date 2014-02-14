@@ -8,6 +8,7 @@
 
 #import "HFBAppDelegate.h"
 #import "HFBChallengesViewController.h"
+#import "HFBOscillator.h"
 
 @implementation HFBAppDelegate
 
@@ -21,7 +22,7 @@
     
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
     [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
-    
+        
     HFBChallengesViewController *challengesViewController = [[HFBChallengesViewController alloc] initWithStyle:UITableViewStyleGrouped];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:challengesViewController];
     navigationController.navigationBar.tintColor = [UIColor colorWithRed:50/255.0f green:50/255.0f blue:50/255.0f alpha:1.0f];

@@ -32,7 +32,7 @@
     self.guessedWrongColor  = [UIColor colorWithRed:217/255.0f green:130/255.0f blue:132/255.0f alpha:1.0f];
     self.oscType            = osc;
     self.bandwidth          = bandwidth;
-    self.oscillator         = [[HFBOscillator alloc] init];
+    self.oscillator         = [HFBOscillator sharedOscillator];
     self.oscillator.oscType = self.oscType;
     self.challengeModel     = [[HFBChallengeModel alloc] initWithBandwidth:bandwidth];
     
@@ -61,41 +61,28 @@
     
     [self.navigationController setToolbarHidden:NO];
     UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
-    UIBarButtonItem *playAgain = [[UIBarButtonItem alloc] initWithTitle:@"Play Again" style:UIBarButtonItemStylePlain target:self action:@selector(replayFrequency)];
+    UIBarButtonItem *playAgain = [[UIBarButtonItem alloc] initWithTitle:@"Play Again" style:UIBarButtonItemStylePlain target:self action:@selector(playFrequency)];
     playAgain.accessibilityHint = @"Plays the audio to guess";
     NSArray *toolbarItems = [NSArray arrayWithObjects:flexibleSpace, playAgain, flexibleSpace, nil];
     [self setToolbarItems:toolbarItems animated:YES];
-    
-    [self.oscillator setUpAudioUnit];
-    
-    //UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification, self.navigationItem.title);
-    //NSLog(@"!!!! %i", [self.navigationItem.titleView isAccessibilityElement]);
-    
+    [self chooseFrequency];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     NSLog(@"[HFBChallengeViewController viewDidAppear]");
-
-    [self performSelector:@selector(nextFrequency) withObject:nil afterDelay:0];
-    
+    [self performSelector:@selector(playFrequency) withObject:nil afterDelay:0];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     NSLog(@"[HFBChallengeViewController viewWillDisappear]");
     [self.oscillator stopFrequency];
-
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
     NSLog(@"[HFBChallengeViewController viewDidDisappear]");
-    if ([self isBeingDismissed])
-    {
-        NSLog(@"[HFBChallengeViewController viewDidDisappear] Stop Audio Unit");
-        [self.oscillator stopAudioUnit];
-    }
 }
 
 
@@ -107,27 +94,26 @@
 
 #pragma mark Quiz Logic
 
-- (void)nextFrequency
+- (void)chooseFrequency
 {
     // Stop current playback if any
     [self.oscillator stopFrequency];
     // Tell the model to get a new random frequency
     [self.challengeModel newQuestion];
-    // Play the new frequency
-    [self.oscillator startFrequency:[self.challengeModel currentFrequencyInHz] withBandwidth:self.challengeModel.bandwidth];
 }
 
-- (void)replayFrequency
+- (void)playFrequency
 {
+    // Play the new frequency
     [self.oscillator startFrequency:[self.challengeModel currentFrequencyInHz] withBandwidth:self.challengeModel.bandwidth];
 }
 
 - (void)setUpViewForNextQuestion
 {
     NSLog(@"[HFBFrequencyViewController setUpViewForNextQuestion]");
+    [self chooseFrequency];
     [self.challengeModel resetAllStates];
     [self.tableView reloadData];
-    
 }
 
 
@@ -136,7 +122,6 @@
 {
     [self dismissViewControllerAnimated:YES completion:^(void){
         NSLog(@"Completed dismissing view controller");
-        //[self nextFrequency];
     }];
 }
 

@@ -77,6 +77,7 @@ typedef enum {
 @property double noiseFilterYmem1;
 @property double noiseFilterYmem2;
 
++ (HFBOscillator *)sharedOscillator;
 - (void)setUpAudioUnit;
 - (void)stopFrequency;
 - (void)startFrequency:(int)freq withBandwidth:(Bandwidth)bw;

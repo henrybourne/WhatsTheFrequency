@@ -153,13 +153,26 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
 
 @implementation HFBOscillator
 
++ (HFBOscillator *)sharedOscillator
+{
+    static HFBOscillator *sharedOscillator = nil;
+    if (!sharedOscillator)
+        sharedOscillator = [[super allocWithZone:nil] init];
+    return sharedOscillator;
+}
+
++ (id)allocWithZone:(NSZone *)zone
+{
+    return [self sharedOscillator];
+}
+
 - (id)init
 {
     if (self = [super init])
     {
         self.frequency      = 1000;
         self.sampleRate     = 44100;
-        self.fadeDuration   = 200;
+        self.fadeDuration   = 6000;
         self.fadePosition   = 0;
         self.fadeAmplitude  = 0.0f;
         self.maxAmplitude   = 0.4f;
@@ -175,6 +188,7 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
 
         
         [self calculateFadeCoefficients];
+        [self setUpAudioUnit];
     }
     return self;
 }
