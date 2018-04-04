@@ -14,8 +14,8 @@
 
 @property Bandwidth bandwidth;
 @property NSArray *frequencies;
-@property NSArray *frequencyLabels;
-@property NSArray *frequencyState;
+//@property NSArray *frequencyLabels;
+//@property NSArray *frequencyState;
 @property int currentFrequencyIndex;
 @property int previousFrequencyIndex;
 @property int numberOfQuestionsPerSession;

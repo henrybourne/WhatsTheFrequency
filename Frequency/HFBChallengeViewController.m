@@ -32,7 +32,8 @@
     self.guessedWrongColor  = [UIColor colorWithRed:217/255.0f green:130/255.0f blue:132/255.0f alpha:1.0f];
     self.oscType            = osc;
     self.bandwidth          = bandwidth;
-    self.oscillator         = [HFBOscillator sharedOscillator];
+    //self.oscillator         = [HFBOscillator sharedOscillator];
+    self.oscillator         = [[HFBOscillator alloc] init];
     self.oscillator.oscType = self.oscType;
     self.challengeModel     = [[HFBChallengeModel alloc] initWithBandwidth:bandwidth];
     
@@ -121,7 +122,7 @@
 - (void)didDismissCorrectViewController
 {
     [self dismissViewControllerAnimated:YES completion:^(void){
-        NSLog(@"Completed dismissing view controller");
+        NSLog(@"[HFBFrequencyViewController setUpViewForNextQuestion] Completed dismissing CorrectViewController");
     }];
 }
 

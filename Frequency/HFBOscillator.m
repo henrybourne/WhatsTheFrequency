@@ -26,126 +26,129 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
                             AudioBufferList             *ioData)
 
 {
-    
-    // Get access to the view controller for all the generator variables
-	HFBOscillator *osc = (__bridge HFBOscillator *)(inRefCon);
+    @autoreleasepool
+    {
+        // Get access to the view controller for all the generator variables
+        HFBOscillator *osc = (__bridge HFBOscillator *)(inRefCon);
 
-	// This is a mono tone generator so we only need the first buffer
-	Float32 *buffer = (Float32 *)ioData->mBuffers[0].mData;
-	
-	// Generate the samples
-	for (int frame = 0; frame < inNumberFrames; frame++)
-	{
-        // First calculate the amplitude if fading in or out
-        switch (osc.oscState)
+        // This is a mono tone generator so we only need the first buffer
+        Float32 *buffer = (Float32 *)ioData->mBuffers[0].mData;
+        
+        // Generate the samples
+        for (int frame = 0; frame < inNumberFrames; frame++)
         {
-            case kOscStateIdle:
-                osc.fadeAmplitude = 0.f;
-                break;
+            // First calculate the amplitude if fading in or out
+            switch (osc.oscState)
+            {
+                case kOscStateIdle:
+                    osc.fadeAmplitude = 0.f;
+                    break;
+                    
+                case kOscStateFadeIn:
+                    if (osc.fadePosition < osc.fadeDuration)
+                    {
+                        osc.fadeAmplitude = [osc.fadeCoefficients[osc.fadePosition] doubleValue];
+                        osc.fadePosition++;
+                    }
+                    else
+                    {
+                        osc.fadePosition = osc.fadeDuration - 1;
+                        osc.oscState = kOscStateSustaining;
+                    }
+                    break;
+                    
+                case kOscStateSustaining:
+                    osc.fadeAmplitude = osc.maxAmplitude;
+                    break;
+                    
+                case kOscStateFadeOut:
+                    if (osc.fadePosition >= 0)
+                    {
+                        osc.fadeAmplitude = [osc.fadeCoefficients[osc.fadePosition] doubleValue];
+                        osc.fadePosition--;
+                    }
+                    else
+                    {
+                        osc.fadePosition = 0;
+                        osc.oscState = kOscStateIdle;
+                        [osc performSelectorOnMainThread:@selector(stopAudioUnit) withObject:nil waitUntilDone:NO];
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+            if (osc.oscType == kOscTypePureTone)
+            {
+                // Generate pure tone output
+                buffer[frame] = sin(osc.toneTheta) * osc.fadeAmplitude;
                 
-            case kOscStateFadeIn:
-                if (osc.fadePosition < osc.fadeDuration)
+                osc.toneTheta += osc.toneThetaIncrement;
+                if (osc.toneTheta > 2.0 * M_PI)
                 {
-                    osc.fadeAmplitude = [osc.fadeCoefficients[osc.fadePosition] doubleValue];
-                    osc.fadePosition++;
+                    osc.toneTheta -= 2.0 * M_PI;
                 }
-                else
-                {
-                    osc.fadePosition = osc.fadeDuration - 1;
-                    osc.oscState = kOscStateSustaining;
-                }
-                break;
+            }
+            else if (osc.oscType == kOscTypePinkNoise)
+            {
+                // Generate filtered noise output
+                // ------ White noise
+                //osc.noiseFilterX = ((long)sGetNextRandomNumber()) * (float)(1.0f / LONG_MAX) * osc.fadeAmplitude;
                 
-            case kOscStateSustaining:
-                osc.fadeAmplitude = osc.maxAmplitude;
-                break;
+                // ------ Pink Noise
+                // Increment and mask index
+                osc.pinkIndex = (osc.pinkIndex + 1) & osc.pinkIndexMask;
                 
-            case kOscStateFadeOut:
-                if (osc.fadePosition >= 0)
-                {
-                    osc.fadeAmplitude = [osc.fadeCoefficients[osc.fadePosition] doubleValue];
-                    osc.fadePosition--;
+                // If index is zero, don't update any random values
+                if (osc.pinkIndex) {
+                    int numZeros = 0;
+                    int n = osc.pinkIndex;
+                    
+                    // Determine how many trailing zeros in pinkIndex
+                    // this will hang if n == 0 so test first
+                    while((n & 1) == 0) {
+                        n = n >> 1;
+                        numZeros++;
+                    }
+                    
+                    // Replace the indexed rows random value
+                    // Subtract and add back to pinkRunningSum instead of adding all
+                    // the random values together. only one changes each time
+                    osc.pinkRunningSum -= [[osc.pinkRows objectAtIndex:numZeros] longValue];
+                    long newRandom = ((long)sGetNextRandomNumber()) >> kPinkRandomShift;
+                    osc.pinkRunningSum += newRandom;
+                    [osc.pinkRows replaceObjectAtIndex:numZeros withObject:[NSNumber numberWithLong:newRandom]];
                 }
-                else
-                {
-                    osc.fadePosition = 0;
-                    osc.oscState = kOscStateIdle;
-                }
-                break;
                 
-            default:
-                break;
+                // Add extra white noise value
+                long newRandom = ((long)sGetNextRandomNumber()) >> kPinkRandomShift;
+    //            NSLog(@"OSC kPinkRandomShift: %lu", kPinkRandomShift);
+    //            NSLog(@"OSC newRandom: %lu", newRandom);
+                long sum = osc.pinkRunningSum + newRandom;
+    //            NSLog(@"OSC sum: %lu", kPinkRandomShift);
+                
+                // Scale to range of -1.0 to 0.999 and factor in volume
+                osc.noiseFilterX = osc.pinkScalar * sum * osc.fadeAmplitude;
+    //            NSLog(@"OSC osc.noiseFilterX: %f osc.pinkScalar: %f osc.fadeAmplitude: %f", osc.noiseFilterX, osc.pinkScalar, osc.fadeAmplitude);
+                
+        
+                // ---- Apply Filter
+                // number y = b0*x + b1*xmem1 + b2*xmem2 - a1*ymem1 - a2*ymem2;
+                osc.noiseFilterY = (osc.noiseb0*osc.noiseFilterX) + (osc.noiseb1*osc.noiseFilterXmem1) + (osc.noiseb2*osc.noiseFilterXmem2) - (osc.noisea1*osc.noiseFilterYmem1) - (osc.noisea2*osc.noiseFilterYmem2);
+                
+                buffer[frame] = osc.noiseFilterY;
+                
+                // step values for next loop
+                osc.noiseFilterXmem2 = osc.noiseFilterXmem1;
+                osc.noiseFilterXmem1 = osc.noiseFilterX;
+                osc.noiseFilterYmem2 = osc.noiseFilterYmem1;
+                osc.noiseFilterYmem1 = osc.noiseFilterY;
+            }
         }
         
-        if (osc.oscType == kOscTypePureTone)
-        {
-            // Generate pure tone output
-            buffer[frame] = sin(osc.toneTheta) * osc.fadeAmplitude;
-            
-            osc.toneTheta += osc.toneThetaIncrement;
-            if (osc.toneTheta > 2.0 * M_PI)
-            {
-                osc.toneTheta -= 2.0 * M_PI;
-            }
-        }
-        else if (osc.oscType == kOscTypePinkNoise)
-        {
-            // Generate filtered noise output
-            // ------ White noise
-            //osc.noiseFilterX = ((long)sGetNextRandomNumber()) * (float)(1.0f / LONG_MAX) * osc.fadeAmplitude;
-            
-            // ------ Pink Noise
-            // Increment and mask index
-            osc.pinkIndex = (osc.pinkIndex + 1) & osc.pinkIndexMask;
-            
-            // If index is zero, don't update any random values
-            if (osc.pinkIndex) {
-                int numZeros = 0;
-                int n = osc.pinkIndex;
-                
-                // Determine how many trailing zeros in pinkIndex
-                // this will hang if n == 0 so test first
-                while((n & 1) == 0) {
-                    n = n >> 1;
-                    numZeros++;
-                }
-                
-                // Replace the indexed rows random value
-                // Subtract and add back to pinkRunningSum instead of adding all
-                // the random values together. only one changes each time
-                osc.pinkRunningSum -= [[osc.pinkRows objectAtIndex:numZeros] longValue];
-                long newRandom = ((long)sGetNextRandomNumber()) >> kPinkRandomShift;
-                osc.pinkRunningSum += newRandom;
-                [osc.pinkRows replaceObjectAtIndex:numZeros withObject:[NSNumber numberWithLong:newRandom]];
-            }
-            
-            // Add extra white noise value
-            long newRandom = ((long)sGetNextRandomNumber()) >> kPinkRandomShift;
-//            NSLog(@"OSC kPinkRandomShift: %lu", kPinkRandomShift);
-//            NSLog(@"OSC newRandom: %lu", newRandom);
-            long sum = osc.pinkRunningSum + newRandom;
-//            NSLog(@"OSC sum: %lu", kPinkRandomShift);
-            
-            // Scale to range of -1.0 to 0.999 and factor in volume
-            osc.noiseFilterX = osc.pinkScalar * sum * osc.fadeAmplitude;
-//            NSLog(@"OSC osc.noiseFilterX: %f osc.pinkScalar: %f osc.fadeAmplitude: %f", osc.noiseFilterX, osc.pinkScalar, osc.fadeAmplitude);
-            
-    
-            // ---- Apply Filter
-            // number y = b0*x + b1*xmem1 + b2*xmem2 - a1*ymem1 - a2*ymem2;
-            osc.noiseFilterY = (osc.noiseb0*osc.noiseFilterX) + (osc.noiseb1*osc.noiseFilterXmem1) + (osc.noiseb2*osc.noiseFilterXmem2) - (osc.noisea1*osc.noiseFilterYmem1) - (osc.noisea2*osc.noiseFilterYmem2);
-            
-            buffer[frame] = osc.noiseFilterY;
-            
-            // step values for next loop
-            osc.noiseFilterXmem2 = osc.noiseFilterXmem1;
-            osc.noiseFilterXmem1 = osc.noiseFilterX;
-            osc.noiseFilterYmem2 = osc.noiseFilterYmem1;
-            osc.noiseFilterYmem1 = osc.noiseFilterY;
-        }
-	}
-	
-	return noErr;
+        return noErr;
+    }
 }
 
 
@@ -153,18 +156,18 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
 
 @implementation HFBOscillator
 
-+ (HFBOscillator *)sharedOscillator
-{
-    static HFBOscillator *sharedOscillator = nil;
-    if (!sharedOscillator)
-        sharedOscillator = [[super allocWithZone:nil] init];
-    return sharedOscillator;
-}
-
-+ (id)allocWithZone:(NSZone *)zone
-{
-    return [self sharedOscillator];
-}
+//+ (HFBOscillator *)sharedOscillator
+//{
+//    static HFBOscillator *sharedOscillator = nil;
+//    if (!sharedOscillator)
+//        sharedOscillator = [[super allocWithZone:nil] init];
+//    return sharedOscillator;
+//}
+//
+//+ (id)allocWithZone:(NSZone *)zone
+//{
+//    return [self sharedOscillator];
+//}
 
 - (id)init
 {
@@ -188,13 +191,14 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
 
         
         [self calculateFadeCoefficients];
-        [self setUpAudioUnit];
+        //[self setUpAudioUnit];
     }
     return self;
 }
 
 - (void)setUpAudioUnit
 {
+    NSLog(@"[HFBOscillator setUpAudioUnit]");
     AudioComponent outputComponent;
     OSStatus status;
     int enableIO = 1;
@@ -270,6 +274,7 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
 
 - (void)stopAudioUnit
 {
+    NSLog(@"[HFBOscillator stopAudioUnit]");
     AudioOutputUnitStop(audioComponent);
     AudioUnitUninitialize(audioComponent);
     AudioComponentInstanceDispose(audioComponent);
@@ -288,7 +293,7 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
 
 - (void)startFrequency:(int)freq withBandwidth:(Bandwidth)bw
 {
-    NSLog(@"Oscillator Start");
+    NSLog(@"[HFBOscillator startFrequency:withBandwidth]");
     self.frequency = freq;
     
     // Set up tone variables
@@ -344,18 +349,30 @@ OSStatus oscillatorRenderer(void                        *inRefCon,
         [self.playbackTimer invalidate];
     }
     self.playbackTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(stopFrequencyWithTimer:) userInfo:nil repeats:NO];
+    
+    NSLog(@"[HFBOscillator startFrequency:withBandwidth] oscstate %i", self.oscState);
+    if (self.oscState == kOscStateIdle)
+    {
+        [self setUpAudioUnit];
+    }
+    NSLog(@"[HFBOscillator startFrequency:withBandwidth] Set osc state to fade in");
     self.oscState = kOscStateFadeIn;
 }
 
 - (void)stopFrequencyWithTimer:(NSTimer *)timer
 {
+    NSLog(@"[HFBOscillator stopFrequencyWithTimer]");
     [self stopFrequency];
 }
 
 - (void)stopFrequency
 {
-    NSLog(@"Oscillator Stop");
-    self.oscState = kOscStateFadeOut;
+    NSLog(@"[HFBOscillator stopFrequency]");
+    if (self.oscState != kOscStateIdle)
+    {
+        self.oscState = kOscStateFadeOut;
+    }
+    
 }
 
 @end

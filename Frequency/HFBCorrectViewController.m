@@ -30,7 +30,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     NSLog(@"[HFBCorrectViewController viewDidLoad]");
-    self.scoreLabel.text = [NSString stringWithFormat:@"Your average accuracy in\nthis session is %i%%", [self.challengeModel averageAccuracy]];
+    self.accuracyLabel.text = [NSString stringWithFormat:@"%i%%", [self.challengeModel averageAccuracy]];
+    self.numberLabel.text = [NSString stringWithFormat:@"%i", [self.challengeModel numberOfQuestionsPerSession]];
 }
 
 - (void)viewDidAppear:(BOOL)animated

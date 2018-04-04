@@ -16,7 +16,8 @@
 @interface HFBCorrectViewController : UIViewController
 
 @property (nonatomic, weak) id<HFBCorrectViewControllerDelegate> delegate;
-@property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
+@property (weak, nonatomic) IBOutlet UILabel *accuracyLabel;
+@property (weak, nonatomic) IBOutlet UILabel *numberLabel;
 @property HFBChallengeModel *challengeModel;
 
 @end
